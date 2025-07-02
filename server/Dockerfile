@@ -6,6 +6,11 @@ RUN mkdir /server
 
 RUN mkdir -p /var/www/html/images
 
+RUN apk add --no-cache python3 make g++ && \
+    python3 -m ensurepip && \
+    ln -sf python3 /usr/bin/python && \
+    pip3 install --upgrade pip
+
 WORKDIR /server
 
 COPY package*.json ./
