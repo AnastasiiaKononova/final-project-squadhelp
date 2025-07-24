@@ -6,19 +6,20 @@ const validators = require('../middlewares/validators');
 const upload = require('../utils/fileUpload');
 
 bankingRouter.post(
-  '/pay', 
-  checkToken.checkToken, 
-  basicMiddlewares.onlyForCustomer, 
-  upload.uploadContestFiles, 
-  basicMiddlewares.parseBody, 
-  validators.validateContestCreation, 
+  '/pay',
+  checkToken.checkToken,
+  basicMiddlewares.onlyForCustomer,
+  upload.uploadContestFiles,
+  basicMiddlewares.parseBody,
+  validators.validateContestCreation,
+  validators.validatePayment,
   BankingController.payment,
 );
 
 bankingRouter.post(
-  '/withdraw', 
-  checkToken.checkToken, 
-  basicMiddlewares.onlyForCreative, 
+  '/withdraw',
+  checkToken.checkToken,
+  basicMiddlewares.onlyForCreative,
   BankingController.cashout,
 );
 

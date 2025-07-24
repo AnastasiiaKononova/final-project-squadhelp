@@ -9,15 +9,15 @@ conversationRouter.post(
 );
 
 conversationRouter.get(
-  '/:interlocutorId',
-  checkToken.checkToken,
-  ConversationController.getChat,
-);
-
-conversationRouter.get(
   '/preview',
   checkToken.checkToken,
   ConversationController.getPreview,
+);
+
+conversationRouter.get(
+  '/:interlocutorId',
+  checkToken.checkToken,
+  ConversationController.getChat,
 );
 
 conversationRouter.patch(
@@ -31,6 +31,5 @@ conversationRouter.patch(
   checkToken.checkToken,
   ConversationController.favoriteChat,
 );
-
 
 module.exports = conversationRouter;

@@ -2,13 +2,13 @@ const authRouter = require('express').Router();
 const validators = require('../middlewares/validators');
 const checkToken = require('../middlewares/checkToken');
 const hashPass = require('../middlewares/hashPassMiddle');
-const UserController = require('../controllers/User.controller');
+const AuthController = require('../controllers/Auth.controller');
 
 authRouter.post(
   '/registration',
   validators.validateRegistrationData,
   hashPass,
-  UserController.registration,
+  AuthController.registration,
 );
 
 authRouter.get(
@@ -19,8 +19,7 @@ authRouter.get(
 authRouter.post(
   '/login',
   validators.validateLogin,
-  UserController.login,
+  AuthController.login,
 );
-
 
 module.exports = authRouter;

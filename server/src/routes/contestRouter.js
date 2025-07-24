@@ -5,6 +5,13 @@ const basicMiddlewares = require('../middlewares/basicMiddlewares');
 const upload = require('../utils/fileUpload');
 
 contestRouter.get(
+  '/',
+  checkToken.checkToken,
+  basicMiddlewares.onlyForCreative,
+  ContestController.getContests,
+);
+
+contestRouter.get(
   '/characteristics',
   checkToken.checkToken,
   ContestController.dataForContest,
@@ -17,23 +24,16 @@ contestRouter.get(
 );
 
 contestRouter.get(
+  '/file/:fileName',
+  checkToken.checkToken,
+  ContestController.downloadFile,
+);
+
+contestRouter.get(
   '/:id',
   checkToken.checkToken,
   basicMiddlewares.canGetContest,
   ContestController.getContestById,
-);
-
-contestRouter.get(
-  '/',
-  checkToken.checkToken,
-  basicMiddlewares.onlyForCreative,
-  ContestController.getContests,
-);
-
-contestRouter.get(
-  '/file/:fileName',
-  checkToken.checkToken,
-  ContestController.downloadFile,
 );
 
 contestRouter.put(
@@ -43,5 +43,4 @@ contestRouter.put(
   ContestController.updateContest,
 );
 
-  
 module.exports = contestRouter;

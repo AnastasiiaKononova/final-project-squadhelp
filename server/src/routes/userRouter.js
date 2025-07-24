@@ -17,5 +17,5 @@ userRouter.put(
   upload.uploadAvatar,
   UserController.updateUser,
 );
-  
+
 module.exports = userRouter;

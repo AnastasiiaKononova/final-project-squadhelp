@@ -15,7 +15,6 @@ apiRouter.use('/catalogs', catalogRouter);
 apiRouter.use('/offers', offerRouter);
 apiRouter.use('/bankings', bankingRouter);
 
-
 module.exports = apiRouter;
 
 
