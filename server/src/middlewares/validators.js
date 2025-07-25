@@ -1,40 +1,36 @@
-const schems = require('../validationSchemes/schems');
+const { registrationSchema, loginSchema, contestSchema, paymentSchema } = require('../validationSchemes/schemes');
 const ServerError = require('../errors/ServerError');
 const BadRequestError = require('../errors/BadRequestError');
 
-module.exports.validateRegistrationData = async (req, res, next) => {
-  const validationResult = await schems.registrationSchem.isValid(req.body);
-  if (!validationResult) {
-    return next(new BadRequestError('Invalid data for registration'));
-  } else {
+module.exports.validateContestCreation = async (req, res, next) => {
+  try {
+    const promiseArray = req.body.contests.map(el => contestSchema.isValid(el));
+    const results = await Promise.all(promiseArray);
+
+    const isAllValid = results.every(valid => valid === true);
+    if (!isAllValid) {
+      return next(new BadRequestError('One or more contests are invalid'));
+    }
     next();
+  } catch (err) {
+    next(err);
   }
 };
 
-module.exports.validateLogin = async (req, res, next) => {
-  const validationResult = await schems.loginSchem.isValid(req.body);
-  if (validationResult) {
-    next();
-  } else {
-    return next(new BadRequestError('Invalid data for login'));
-  }
-};
-
-module.exports.validateContestCreation = (req, res, next) => {
-  const promiseArray = [];
-  req.body.contests.forEach(el => {
-    promiseArray.push(schems.contestSchem.isValid(el));
-  });
-  return Promise.all(promiseArray)
-    .then(results => {
-      results.forEach(result => {
-        if (!result) {
-          return next(new BadRequestError());
-        }
-      });
+const validateWithSchema = (schema, options = {}) => {
+  return async (req, res, next) => {
+    try {
+      await schema.validate(req.body, options);
       next();
-    })
-    .catch(err => {
-      next(err);
-    });
+    } catch (err) {
+      if (err.name === 'ValidationError') {
+        return next(new BadRequestError(`Invalid data: ${err.errors?.[0] || err.message}`));
+      }
+      next(new ServerError());
+    }
+  };
 };
+
+module.exports.validateRegistrationData = validateWithSchema(registrationSchema);
+module.exports.validateLogin = validateWithSchema(loginSchema);
+module.exports.validatePayment = validateWithSchema(paymentSchema);
