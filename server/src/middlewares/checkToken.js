@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const CONSTANTS = require('../constants');
 const TokenError = require('../errors/TokenError');
 
-module.exports.checkToken = async (req, res, next) => {
+const checkToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return next(new TokenError('Authorization token is required'));
@@ -17,3 +17,5 @@ module.exports.checkToken = async (req, res, next) => {
     next(new TokenError('Invalid or expired token'));
   }
 };
+
+module.exports = checkToken;
