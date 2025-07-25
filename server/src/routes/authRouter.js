@@ -1,6 +1,5 @@
 const authRouter = require('express').Router();
 const validators = require('../middlewares/validators');
-const checkToken = require('../middlewares/checkToken');
 const hashPass = require('../middlewares/hashPassMiddle');
 const AuthController = require('../controllers/Auth.controller');
 
@@ -13,7 +12,7 @@ authRouter.post(
 
 authRouter.get(
   '/me',
-  checkToken.checkAuth,
+  AuthController.me,
 );
 
 authRouter.post(
