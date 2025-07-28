@@ -5,17 +5,18 @@ module.exports.updateRating = async (data, predicate, transaction) => {
   const [updatedCount, [updatedRating]] = await bd.Ratings.update(data,
     { where: predicate, returning: true, transaction });
   if (updatedCount !== 1) {
-    throw new ServerError('cannot update mark on this offer');
+    throw new ServerError('Cannot update mark on this offer');
   }
-  return updatedRating.dataValues;
+  return updatedRating.get({ plain: true });
 };
 
 module.exports.createRating = async (data, transaction) => {
-  const result = await bd.Ratings.create(data, { transaction });
-  if (!result) {
-    throw new ServerError('cannot mark offer');
-  } else {
+  try {
+    const result = await bd.Ratings.create(data, {transaction});
     return result.get({ plain: true });
+  } catch {
+    throw new ServerError('Cannot mark offer')
   }
 };
+ 
 
