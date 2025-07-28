@@ -34,7 +34,6 @@ const uploadLogoFiles = multer({ storage: storageContestFiles }).single(
 module.exports.uploadAvatar = (req, res, next) => {
   uploadAvatars(req, res, (err) => {
     if (err instanceof multer.MulterError) {
-
       next(new ServerError(err.message));
     } else if (err) {
       next(new ServerError(err.message));
