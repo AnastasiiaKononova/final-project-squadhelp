@@ -18,7 +18,7 @@ module.exports.updateContest = async (data, predicate, transaction) => {
 };
 
 module.exports.updateContestStatus = async (data, predicate, transaction) => {
-  const updateResult = await bd.Contests.update(data,{ 
+  const updateResult = await bd.Contests.update(data, {
     where: predicate,
     returning: true,
     transaction,
