@@ -5,7 +5,7 @@ const ws = require('../socketInit');
 const userQueries = require('./queries/authQueries');
 const BadRequestError = require('../errors/BadRequestError');
 const { getSortedParticipants, getInterlocutorId, formatUser, updateConversationFlag, buildPreview } = require('../utils/chatUtils');
-const { getMessagesByParticipants, getLastMessagesByUser} = require('../controllers/queries/conversationQueries');
+const { getMessagesByParticipants, getLastMessagesByUser } = require('../controllers/queries/conversationQueries');
 
 module.exports.addMessage = async (req, res, next) => {
   try {
@@ -139,7 +139,7 @@ module.exports.blackList = async (req, res, next) => {
     const chat = await updateConversationFlag(participants, userId, 'blackList', blackListFlag);
 
     const interlocutorId = getInterlocutorId(participants, userId);
-    controller.getChatController().emitChangeBlockStatus(interlocutorId, chat);
+    ws.getChatController().emitChangeBlockStatus(interlocutorId, chat);
 
     res.status(200).send(chat);
   } catch (err) {
