@@ -2,6 +2,7 @@ const authRouter = require('express').Router();
 const validators = require('../middlewares/validators');
 const hashPass = require('../middlewares/hashPassMiddle');
 const AuthController = require('../controllers/Auth.controller');
+const checkToken = require('../middlewares/checkToken');
 
 authRouter.post(
   '/registration',
@@ -12,6 +13,7 @@ authRouter.post(
 
 authRouter.get(
   '/me',
+  checkToken,
   AuthController.me,
 );
 
