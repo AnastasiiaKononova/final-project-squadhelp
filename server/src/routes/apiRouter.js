@@ -7,6 +7,7 @@ const authRouter = require('./authRouter');
 const catalogRouter = require('./catalogRouter');
 const offerRouter = require('./offerRouter');
 const bankingRouter = require('./bankingRouter');
+const contestPropertiesRouter = require('./contestPropertiesRouter');
 
 apiRouter.use('/auth', authRouter);
 
@@ -18,6 +19,7 @@ apiRouter.use('/conversations', conversationRouter);
 apiRouter.use('/catalogs', catalogRouter);
 apiRouter.use('/offers', offerRouter);
 apiRouter.use('/bankings', bankingRouter);
+apiRouter.use('/contests-properties', contestPropertiesRouter);
 
 module.exports = apiRouter;
 
