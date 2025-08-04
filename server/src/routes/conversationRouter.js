@@ -1,8 +1,10 @@
 const conversationRouter = require('express').Router();
 const ConversationController = require('../controllers/Conversation.controller');
+const validators = require('../middlewares/validators');
 
 conversationRouter.post(
   '/messages',
+  validators.validateMessageBody,
   ConversationController.addMessage,
 );
 
