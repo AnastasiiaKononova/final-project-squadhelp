@@ -1,62 +1,33 @@
-const Message = require('../../models/mongoModels/Message');
+const Conversation = require('../../models/mongoModels/conversation');
+const BadRequestError = require('../../errors/BadRequestError');
+const NotFoundError = require('../../errors/NotFoundError');
 
-async function getMessagesByParticipants(participants) {
-  return Message.aggregate([
+module.exports.findOrCreateConversation = async function (participants) {
+  return await Conversation.findOneAndUpdate(
+    { participants },
+    { participants, blackList: [false, false], favoriteList: [false, false] },
     {
-      $lookup: {
-        from: 'conversations',
-        localField: 'conversation',
-        foreignField: '_id',
-        as: 'conversationData',
-      },
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true,
+      useFindAndModify: false,
     },
-    {
-      $match: {
-        'conversationData.participants': { $all: participants },
-      },
-    },
-    { $sort: { createdAt: 1 } },
-    {
-      $project: {
-        '_id': 1,
-        'sender': 1,
-        'body': 1,
-        'conversation': 1,
-        'createdAt': 1,
-        'updatedAt': 1,
-      },
-    },
-  ]);
-}
+  );
+};
 
-async function getLastMessagesByUser(userId) {
-  return Message.aggregate([
-    {
-      $lookup: {
-        from: 'conversations',
-        localField: 'conversation',
-        foreignField: '_id',
-        as: 'conversationData',
-      },
-    },
-    { $unwind: '$conversationData' },
-    { $match: { 'conversationData.participants': userId } },
-    { $sort: { createdAt: -1 } },
-    {
-      $group: {
-        _id: '$conversationData._id',
-        sender: { $first: '$sender' },
-        text: { $first: '$body' },
-        createAt: { $first: '$createdAt' },
-        participants: { $first: '$conversationData.participants' },
-        blackList: { $first: '$conversationData.blackList' },
-        favoriteList: { $first: '$conversationData.favoriteList' },
-      },
-    },
-  ]);
-}
-
-module.exports = {
-  getMessagesByParticipants,
-  getLastMessagesByUser,
+module.exports.updateConversationFlag = async function (participants, userId, listName, flag) {
+  const userIndex = participants.indexOf(userId);
+  if (userIndex === -1) {
+    throw new BadRequestError('Invalid user in participants');
+  }
+  const predicate = `${listName}.${userIndex}`;
+  const chat = await Conversation.findOneAndUpdate(
+    { participants },
+    { $set: { [predicate]: flag } },
+    { new: true },
+  );
+  if (!chat) {
+    throw new NotFoundError('Conversation not found');
+  }
+  return chat;
 };

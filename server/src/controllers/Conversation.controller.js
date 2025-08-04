@@ -1,39 +1,23 @@
-const db = require('../models');
-const Conversation = require('../models/mongoModels/conversation');
-const Message = require('../models/mongoModels/Message');
 const ws = require('../socketInit');
-const userQueries = require('./queries/authQueries');
-const BadRequestError = require('../errors/BadRequestError');
-const { getSortedParticipants, getInterlocutorId, formatUser, updateConversationFlag, buildPreview } = require('../utils/chatUtils');
-const { getMessagesByParticipants, getLastMessagesByUser } = require('../controllers/queries/conversationQueries');
+const userQueries = require('./queries/userQueries');
+const messageQueries = require('./queries/messageQueries');
+const conversationQueries = require('./queries/conversationQueries');
+const { getSortedParticipants, getInterlocutorId, formatUser, buildPreview } = require('../utils/chatUtils');
 
 module.exports.addMessage = async (req, res, next) => {
   try {
     const { userId } = req.tokenData;
     const { recipient, messageBody, interlocutor: interlocutorFromClient } = req.body;
 
-    if (!recipient || !messageBody) {
-      throw new BadRequestError('recipient and messageBody are required');
-    }
-
     const participants = getSortedParticipants(userId, recipient);
 
-    const conversation = await Conversation.findOneAndUpdate(
-      { participants },
-      { participants, blackList: [false, false], favoriteList: [false, false] },
-      {
-        upsert: true,
-        new: true,
-        setDefaultsOnInsert: true,
-        useFindAndModify: false,
-      },
-    );
+    const conversation = await conversationQueries.findOrCreateConversation(participants);
 
-    const message = await new Message({
+    const message = await messageQueries.createMessage({
       sender: userId,
       body: messageBody,
       conversation: conversation._id,
-    }).save();
+    });
 
     const messageForSend = {
       ...message.toObject(),
@@ -90,7 +74,7 @@ module.exports.getChat = async (req, res, next) => {
 
     const participants = getSortedParticipants(userId, interlocutorId);
 
-    const messages = await getMessagesByParticipants(participants);
+    const messages = await messageQueries.getMessagesByParticipants(participants);
 
     const interlocutor = await userQueries.findUser({ id: interlocutorId });
 
@@ -107,16 +91,13 @@ module.exports.getPreview = async (req, res, next) => {
   try {
     const userId = req.tokenData.userId;
 
-    const conversations = await getLastMessagesByUser(userId);
+    const conversations = await messageQueries.getLastMessagesByUser(userId);
 
     const interlocutors = conversations.map(conv =>
       getInterlocutorId(conv.participants, userId),
     );
 
-    const senders = await db.Users.findAll({
-      where: { id: interlocutors },
-      attributes: ['id', 'firstName', 'lastName', 'displayName', 'avatar'],
-    });
+    const senders = await userQueries.getUsersByIds(interlocutors);
 
     conversations.forEach((conv) => {
       const sender = senders.find(s => conv.participants.includes(s.dataValues.id));
@@ -136,7 +117,7 @@ module.exports.blackList = async (req, res, next) => {
     const { participants, blackListFlag } = req.body;
     const userId = req.tokenData.userId;
 
-    const chat = await updateConversationFlag(participants, userId, 'blackList', blackListFlag);
+    const chat = await conversationQueries.updateConversationFlag(participants, userId, 'blackList', blackListFlag);
 
     const interlocutorId = getInterlocutorId(participants, userId);
     ws.getChatController().emitChangeBlockStatus(interlocutorId, chat);
@@ -152,7 +133,7 @@ module.exports.favoriteChat = async (req, res, next) => {
     const { participants, favoriteFlag } = req.body;
     const userId = req.tokenData.userId;
 
-    const chat = await updateConversationFlag(participants, userId, 'favoriteList', favoriteFlag);
+    const chat = await conversationQueries.updateConversationFlag(participants, userId, 'favoriteList', favoriteFlag);
 
     res.status(200).send(chat);
   } catch (err) {
