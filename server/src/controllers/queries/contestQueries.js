@@ -141,3 +141,54 @@ module.exports.getContestById = async (contestId, userId, role) => {
 
   return contestInfo.get({ plain: true });
 };
+
+module.exports.findContestForUser = async (contestId, userId, role) => {
+  if (role === CONSTANTS.CUSTOMER) {
+    return bd.Contests.findOne({
+      where: {
+        id: contestId,
+        userId,
+      },
+    });
+  } else if (role === CONSTANTS.CREATOR) {
+    return bd.Contests.findOne({
+      where: {
+        id: contestId,
+        status: {
+          [bd.Sequelize.Op.or]: [
+            CONSTANTS.CONTEST_STATUS_ACTIVE,
+            CONSTANTS.CONTEST_STATUS_FINISHED,
+          ],
+        },
+      },
+    });
+  }
+  return null;
+};
+
+module.exports.findContestStatusById = async (contestId) => {
+  return bd.Contests.findOne({
+    where: { id: contestId },
+    attributes: ['status'],
+  });
+};
+
+module.exports.findCustomerContestActive = async (userId, contestId) => {
+  return bd.Contests.findOne({
+    where: {
+      userId,
+      id: contestId,
+      status: CONSTANTS.CONTEST_STATUS_ACTIVE,
+    },
+  });
+};
+
+module.exports.findContestNotFinished = async (userId, contestId) => {
+  return bd.Contests.findOne({
+    where: {
+      userId,
+      id: contestId,
+      status: { [bd.Sequelize.Op.not]: CONSTANTS.CONTEST_STATUS_FINISHED },
+    },
+  });
+};
