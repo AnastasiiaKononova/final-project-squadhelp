@@ -10,11 +10,6 @@ contestRouter.get(
 );
 
 contestRouter.get(
-  '/characteristics',
-  ContestController.dataForContest,
-);
-
-contestRouter.get(
   '/customer',
   ContestController.getCustomersContests,
 );
