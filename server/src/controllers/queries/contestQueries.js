@@ -1,5 +1,7 @@
 const bd = require('../../models');
 const ServerError = require('../../errors/ServerError');
+const { fn, col } = require('sequelize');
+const CONSTANTS = require('../../constants');
 
 module.exports.updateContest = async (data, predicate, transaction) => {
   const [updatedCount, updatedRows] = await bd.Contests.update(data, {
@@ -30,3 +32,112 @@ module.exports.updateContestStatus = async (data, predicate, transaction) => {
   }
 };
 
+module.exports.getContests = async (req) => {
+  const { typeIndex, industry, awardSort } = req.query;
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const offset = parseInt(req.query.offset, 10) || 0;
+  const ownEntries = req.query.ownEntries === 'true' || req.query.ownEntries === '1';
+  return  await bd.Contests
+    .scope([
+      { method: ['byTypeIndex', typeIndex] },
+      { method: ['byIndustry', industry] },
+      { method: ['orderByAward', awardSort] },
+      'onlyActiveAndFinished',
+      'orderByIdDesc',
+    ])
+    .findAll({
+      limit,
+      offset,
+      attributes: {
+        include: [
+          [
+            fn('COUNT', col('Offers.id')), 'count',
+          ],
+        ],
+      },
+      include: [
+        {
+          model: bd.Offers,
+          required: ownEntries,
+          where: ownEntries ? { userId: req.tokenData.userId } : {},
+          attributes: [],
+        },
+      ],
+      group: ['Contests.id'],
+      subQuery: false,
+    });
+};
+
+module.exports.getCustomerContests = async (query, userId) => {
+  const { contestStatus, limit, offset } = query;
+  return await bd.Contests.scope([
+    { method: ['byUser', parseInt(userId)] },
+    { method: ['byStatus', contestStatus] },
+    'orderByIdDesc',
+  ]).findAll({
+    limit: parseInt(limit, 10) || 10,
+    offset: parseInt(offset, 10) || 0,
+    attributes: {
+      include: [
+        [
+          fn('COUNT', col('Offers.id')), 'count',
+        ],
+      ],
+    },
+    include: [
+      {
+        model: bd.Offers,
+        required: false,
+        attributes: [],
+      },
+    ],
+    group: ['Contests.id'],
+    subQuery: false,
+  });
+};
+
+module.exports.getContestById = async (contestId, userId, role) => {
+  const contestInfo = await bd.Contests.findOne({
+    where: { id: contestId },
+    order: [[bd.Offers, 'id', 'asc']],
+    include: [
+      {
+        model: bd.Users,
+        required: true,
+        attributes: {
+          exclude: ['password', 'role', 'balance', 'accessToken'],
+        },
+      },
+      {
+        model: bd.Offers,
+        required: false,
+        where: role === CONSTANTS.CREATOR ? { userId } : {},
+        attributes: {
+          exclude: ['userId', 'contestId'],
+          include: [[col('Offers.Rating.mark'), 'mark']],
+        },
+        include: [
+          {
+            model: bd.Users,
+            required: true,
+            attributes: {
+              exclude: ['password', 'role', 'balance', 'accessToken'],
+            },
+          },
+          {
+            model: bd.Ratings,
+            required: false,
+            where: { userId },
+            attributes: { exclude: ['userId', 'offerId'] },
+          },
+        ],
+      },
+    ],
+  });
+
+  if (!contestInfo) {
+    throw new ServerError('Contest not found');
+  }
+
+  return contestInfo.get({ plain: true });
+};
