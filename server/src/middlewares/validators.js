@@ -1,4 +1,4 @@
-const { registrationSchema, loginSchema, contestSchema, paymentSchema } = require('../validationSchemes/schemes');
+const { registrationSchema, loginSchema, contestSchema, paymentSchema, messageSchema } = require('../validationSchemes/schemes');
 const ServerError = require('../errors/ServerError');
 const BadRequestError = require('../errors/BadRequestError');
 
@@ -34,3 +34,4 @@ const validateWithSchema = (schema, options = {}) => {
 module.exports.validateRegistrationData = validateWithSchema(registrationSchema);
 module.exports.validateLogin = validateWithSchema(loginSchema);
 module.exports.validatePayment = validateWithSchema(paymentSchema);
+module.exports.validateMessageBody = validateWithSchema(messageSchema);

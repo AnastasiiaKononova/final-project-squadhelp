@@ -16,8 +16,8 @@ module.exports.loginSchema = yup.object().shape({
 
 const contestSchema = yup.object().shape({
   contestType: yup.string().matches(/(name|logo|tagline)/).required(),
-  fileName: yup.string().min(1),
-  originalFileName: yup.string().min(1),
+  fileName: yup.string(),
+  originalFileName: yup.string(),
   title: yup.string().required().min(1),
   typeOfName: yup.string().min(1),
   industry: yup.string().required().min(1),
@@ -32,7 +32,8 @@ const contestSchema = yup.object().shape({
 module.exports.contestSchema = contestSchema;
 
 module.exports.paymentSchema = yup.object().shape({
-  number: yup.string().trim().matches(/^\d{4} \d{4} \d{4} \d{4}$/, 'Card number must be in format "1234 5678 9012 3456"')
+  number: yup.string().transform(value => (typeof value === 'string' ? value.replace(/\s+/g, '') : value))
+    .matches(/^\d{16}$/, 'Card number must be 16 digits (spaces are ignored)')
     .required('Card number is required'),
   cvc: yup.string().matches(/^\d{3,4}$/, 'CVC must be 3 or 4 digits')
     .required('CVC is required'),
@@ -44,3 +45,8 @@ module.exports.paymentSchema = yup.object().shape({
     .required('Contests array is required'),
 });
 
+module.exports.messageSchema = yup.object({
+  recipient: yup.number().required('Recipient is required'),
+  messageBody: yup.string().required('Message body is required'),
+  interlocutor: yup.object().notRequired(),
+});
