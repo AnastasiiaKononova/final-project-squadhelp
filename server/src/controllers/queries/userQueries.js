@@ -1,11 +1,9 @@
 const bd = require('../../models');
-const bcrypt = require('bcrypt');
 const UserNotFoundError = require('../../errors/UserNotFoundError');
 const ServerError = require('../../errors/ServerError');
-const UncorrectPassword = require('../../errors/UncorrectPassword');
 
 module.exports.updateUser = async (data, userId, transaction) => {
-  const [updatedCount, [updatedUser]] = await bd.Users.update(data, { 
+  const [updatedCount, [updatedUser]] = await bd.Users.update(data, {
     where: { id: userId },
     returning: true,
     transaction });
@@ -36,9 +34,23 @@ module.exports.userCreation = async (data) => {
   }
 };
 
-module.exports.passwordCompare = async (pass1, pass2) => {
-  const passwordCompare = await bcrypt.compare(pass1, pass2);
-  if (!passwordCompare) {
-    throw new UncorrectPassword('Wrong password');
+module.exports.getUsersByIds = async function (ids) {
+  return await bd.Users.findAll({
+    where: { id: ids },
+    attributes: ['id', 'firstName', 'lastName', 'displayName', 'avatar'],
+  });
+};
+
+module.exports.findUserWithLock = async (userId, transaction) => {
+  const user = await bd.Users.findOne({
+    where: { id: userId },
+    transaction,
+    lock: transaction.LOCK.UPDATE,
+  });
+
+  if (!user) {
+    throw new UserNotFoundError('User not found');
   }
+
+  return user;
 };
