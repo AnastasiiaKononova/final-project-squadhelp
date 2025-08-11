@@ -32,7 +32,7 @@ module.exports.parseBody = (req, res, next) => {
 module.exports.canGetContest = async (req, res, next) => {
   const contestId = Number(req.params.id);
 
-  if (!contestId || isNaN(contestId)) {
+  if (isNaN(contestId) || contestId <= 0) {
     return next(new ServerError('Invalid contest ID'));
   }
 
