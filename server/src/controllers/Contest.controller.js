@@ -11,7 +11,7 @@ module.exports.getContestById = async (req, res, next) => {
       tokenData: { userId, role },
     } = req;
 
-    const contest = await contestQueries.getContestById({ contestId, userId, role });
+    const contest = await contestQueries.getContestById(contestId, userId, role);
     res.send(contest);
   }catch (err) {
     next(new ServerError(err.message));
@@ -40,13 +40,17 @@ module.exports.updateContest = async (req, res, next) => {
     return next(new ServerError('Invalid contest'));
   }
 
-  if (req.file) {
-    req.body.fileName = req.file.filename;
-    req.body.originalFileName = req.file.originalname;
-  }
-
   try {
-    const updatedContest = await contestQueries.updateContest(req.body, {
+    const updateData = {
+      ...req.body,
+    };
+
+    if (req.file) {
+      updateData.fileName = req.file.filename;
+      updateData.originalFileName = req.file.originalname;
+    }
+
+    const updatedContest = await contestQueries.updateContest(updateData, {
       id: contestId,
       userId,
     });
@@ -60,7 +64,7 @@ module.exports.getCustomersContests = async (req, res, next) => {
   const { query, tokenData: { userId } } = req;
   try {
     const contests = await contestQueries.getCustomerContests(query, userId);
-    const haveMore = contests.length > 0;
+    const haveMore = contests.length === Number(query.limit);
     res.status(200).send({ contests, haveMore });
   } catch (err) {
     next(new ServerError(err.message));
