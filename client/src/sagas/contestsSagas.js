@@ -25,7 +25,8 @@ export function* customerContestsSaga(action) {
 export function* updateContestSaga(action) {
   yield put({ type: ACTION.UPDATE_CONTEST_REQUEST });
   try {
-    const { data } = yield restController.updateContest(action.data);
+    const { id, formData } = action.data;
+    const { data } = yield restController.updateContest(id, formData);
     yield put({ type: ACTION.UPDATE_STORE_AFTER_UPDATE_CONTEST, data });
   } catch (e) {
     yield put({ type: ACTION.UPDATE_CONTEST_ERROR, error: e.response });
@@ -45,7 +46,7 @@ export function* dataForContestSaga(action) {
 export function* getContestByIdSaga(action) {
   yield put({ type: ACTION.GET_CONTEST_BY_ID_REQUEST });
   try {
-    const { data } = yield restController.getContestById(action.data);
+    const { data } = yield restController.getContestById(action.data.contestId);
     const { Offers } = data;
     delete data.Offers;
     yield put({ type: ACTION.GET_CONTEST_BY_ID_SUCCESS, data: { contestData: data, offers: Offers } });
