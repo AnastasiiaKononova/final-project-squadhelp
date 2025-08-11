@@ -59,7 +59,7 @@ const UpdateUserInfoForm = (props) => {
           />
         </div>
         <ImageUpload
-          name="file"
+          name="avatar"
           classes={{
             uploadContainer: styles.imageUploadContainer,
             inputContainer: styles.uploadInputContainer,
@@ -82,6 +82,7 @@ const mapStateToProps = (state) => {
       firstName: data.firstName,
       lastName: data.lastName,
       displayName: data.displayName,
+      avatar: data.avatar || null
     },
   };
 };
@@ -91,3 +92,5 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UpdateUserInfoForm);
+
+

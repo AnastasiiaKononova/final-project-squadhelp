@@ -8,7 +8,11 @@ import styles from './UserInfo.module.sass';
 const UserInfo = (props) => {
   const updateUserData = (values) => {
     const formData = new FormData();
-    formData.append('file', values.file);
+
+    if (values.avatar && values.avatar instanceof File) {
+      formData.append('avatar', values.avatar);
+    }
+
     formData.append('firstName', values.firstName);
     formData.append('lastName', values.lastName);
     formData.append('displayName', values.displayName);
@@ -21,7 +25,7 @@ const UserInfo = (props) => {
   } = data;
   return (
     <div className={styles.mainContainer}>
-      {isEdit ? <UpdateUserInfoForm onSubmit={updateUserData} />
+      {isEdit ? <UpdateUserInfoForm onSubmit={updateUserData} initialValues={props.initialValues} />
         : (
           <div className={styles.infoContainer}>
             <img
@@ -59,10 +63,7 @@ const UserInfo = (props) => {
             </div>
           </div>
         )}
-      <div
-        onClick={() => changeEditMode(!isEdit)}
-        className={styles.buttonEdit}
-      >
+      <div onClick={() => changeEditMode(!isEdit)} className={styles.buttonEdit}>
         {isEdit ? 'Cancel' : 'Edit'}
       </div>
     </div>
@@ -72,7 +73,20 @@ const UserInfo = (props) => {
 const mapStateToProps = (state) => {
   const { data } = state.userStore;
   const { isEdit } = state.userProfile;
-  return { data, isEdit };
+
+  return {
+    data,
+    isEdit,
+    initialValues: {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      displayName: data.displayName,
+      avatar:
+        data.avatar && data.avatar !== 'anon.png'
+          ? `${CONSTANTS.publicURL}${data.avatar}`
+          : '', 
+    },
+  };
 };
 
 const mapDispatchToProps = (dispatch) => ({
