@@ -25,8 +25,9 @@ const AddToCatalog = (props) => {
   };
 
   const click = (values) => {
+
     const { addChatId } = props;
-    props.addChatToCatalog({ chatId: addChatId, catalogId: values.catalogId });
+    props.addChatToCatalog({ conversationId: addChatId, catalogId: values.catalogId });  
   };
 
   const selectArray = getCatalogsNames();

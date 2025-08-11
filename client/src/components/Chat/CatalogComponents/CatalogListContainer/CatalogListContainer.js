@@ -9,9 +9,9 @@ class CatalogListContainer extends React.Component {
     this.props.getCatalogList();
   }
 
-    removeChatFromCatalog = (event, chatId) => {
+    removeChatFromCatalog = (event, conversationId) => {
       const { _id } = this.props.chatStore.currentCatalog;
-      this.props.removeChatFromCatalog({ chatId, catalogId: _id });
+      this.props.removeChatFromCatalog({ conversationId, catalogId: _id });
       event.stopPropagation();
     };
 
