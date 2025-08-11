@@ -24,7 +24,7 @@ module.exports.payment = async (req, res, next) => {
     const { orderId, createdAt } = generateOrder();
 
     const contestsData = req.body.contests.map((contest, index) => {
-      const file = req.files?.[index];
+
       return {
         ...contest,
         status: index === 0 ? 'active' : 'pending',
@@ -33,8 +33,8 @@ module.exports.payment = async (req, res, next) => {
         orderId,
         createdAt,
         prize: calculatePrize(price, req.body.contests.length, index),
-        fileName: file ? file.filename : null,
-        originalFileName: file ? file.originalname : null,
+        fileName: contest.fileName || null,
+        originalFileName: contest.originalFileName || null,
       };
     });
 
