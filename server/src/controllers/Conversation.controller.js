@@ -70,7 +70,12 @@ module.exports.addMessage = async (req, res, next) => {
 module.exports.getChat = async (req, res, next) => {
   try {
     const { userId } = req.tokenData;
-    const interlocutorId = Number(req.params.interlocutorId);
+    const interlocutorIdRaw = req.params.interlocutorId;
+    const interlocutorId = Number(interlocutorIdRaw);
+
+    if (!interlocutorIdRaw || isNaN(interlocutorId)) {
+      return res.status(400).json({ error: 'Invalid interlocutorId' });
+    }
 
     const participants = getSortedParticipants(userId, interlocutorId);
 
@@ -140,5 +145,4 @@ module.exports.favoriteChat = async (req, res, next) => {
     next(err);
   }
 };
-
 
