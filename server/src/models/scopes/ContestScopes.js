@@ -1,11 +1,23 @@
 const CONSTANTS = require('../../constants');
 const { Op } = require('sequelize');
 
+
+const contestTypeMapping = ['', 'name', 'tagline', 'logo'];
+
 module.exports.contestScopes = {
   byTypeIndex(typeIndex) {
-    return typeIndex ? {
-      where: { contestType: typeIndex },
-    } : {};
+    if (!typeIndex)
+      return {};
+
+    const contestType = contestTypeMapping[typeIndex];
+    if (!contestType)
+      return {};
+
+    return {
+      where: {
+        contestType,
+      },
+    };
   },
   byUser(userId){
     return {
