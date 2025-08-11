@@ -51,9 +51,11 @@ export default function (state = initialState, action) {
     }
     case ACTION.SET_NEW_CUSTOMER_FILTER: {
       return {
-        ...initialState,
-        isFetching: false,
+        ...state,
         customerFilter: action.filter,
+        contests: [],
+        error: null,
+        haveMore: true
       };
     }
     case ACTION.SET_NEW_CREATOR_FILTER: {
