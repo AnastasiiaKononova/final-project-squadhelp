@@ -2,7 +2,7 @@ const contestPropertiesRouter = require('express').Router();
 const ContestPropertiesController = require('../controllers/ContestProperties.controller');
 
 contestPropertiesRouter.get(
-  '/characterisctic',
+  '/characteristic',
   ContestPropertiesController.dataForContest,
 );
 
