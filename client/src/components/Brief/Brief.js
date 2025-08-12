@@ -16,8 +16,7 @@ const Brief = (props) => {
     if (values.file instanceof File) {
       data.append('file', values.file);
     }
-    data.append('contestId', props.contestData.id);
-    props.update(data);
+    props.update(props.contestData.id, data);
   };
 
   const getContestObjInfo = () => {
@@ -95,7 +94,9 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  update: (data) => dispatch(updateContest(data)),
+ update: (id, formData) => dispatch(updateContest({ id, formData })),
+
+
   changeEditContest: (data) => dispatch(changeEditContest(data)),
   clearUpdateContestStore: () => dispatch(clearUpdateContestStore()),
 });
