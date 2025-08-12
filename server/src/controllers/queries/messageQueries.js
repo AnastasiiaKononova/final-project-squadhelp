@@ -56,11 +56,11 @@ module.exports.getLastMessagesByUser = async function (userId) {
   ]);
 };
 
-module.exports.createMessage = async function ({ sender, body, conversationId }) {
+module.exports.createMessage = async function ({ sender, body, conversation }) {
   const message = new Message({
     sender,
     body,
-    conversation: conversationId,
+    conversation,
   });
   return await message.save();
 };
