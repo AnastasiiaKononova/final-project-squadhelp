@@ -114,7 +114,6 @@ module.exports.getContestById = async (contestId, userId, role) => {
         where: role === CONSTANTS.CREATOR ? { userId } : {},
         attributes: {
           exclude: ['userId', 'contestId'],
-          include: [[col('Offers.Rating.mark'), 'mark']],
         },
         include: [
           {
@@ -128,10 +127,11 @@ module.exports.getContestById = async (contestId, userId, role) => {
             model: bd.Ratings,
             required: false,
             where: { userId },
-            attributes: { exclude: ['userId', 'offerId'] },
+            attributes: ['mark'],
           },
         ],
       },
+
     ],
   });
 
