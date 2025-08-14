@@ -15,7 +15,9 @@ module.exports.contestScopes = {
 
     return {
       where: {
-        contestType,
+        contestType:{
+          [Op.in]: [contestType],
+        },
       },
     };
   },
