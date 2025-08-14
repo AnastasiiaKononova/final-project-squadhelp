@@ -9,10 +9,21 @@ import ChatInput from '../../ChatComponents/ChatInut/ChatInput';
 
 class Dialog extends React.Component {
   componentDidMount() {
-    this.props.getDialog({ interlocutorId: this.props.interlocutor.id });
-    this.scrollToBottom();
+    if (this.props.interlocutor && this.props.interlocutor.id) {
+      this.props.getDialog({ interlocutorId: this.props.interlocutor.id });
+      this.scrollToBottom();
+    }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (
+      nextProps.interlocutor &&
+      this.props.interlocutor &&
+      nextProps.interlocutor.id !== this.props.interlocutor.id
+    ) {
+      this.props.getDialog({ interlocutorId: nextProps.interlocutor.id });
+    }
+  }
     messagesEnd = React.createRef();
 
     scrollToBottom = () => {

@@ -15,13 +15,14 @@ import ContestBox from '../ContestBox/ContestBox';
 import styles from './CreatorDashboard.module.sass';
 import TryAgain from '../TryAgain/TryAgain';
 
-const types = ['', 'name,tagline,logo', 'name', 'tagline', 'logo', 'name,tagline', 'logo,tagline', 'name,logo'];
+// const types = ['', 'name,tagline,logo', 'name', 'tagline', 'logo', 'name,tagline', 'logo,tagline', 'name,logo'];
+const types =  ["Choose type",  'name', 'tagline', 'logo'];
 
 class CreatorDashboard extends React.Component {
-    renderSelectType = () => {
+    renderSelectType = () => { 
       const array = [];
       const { creatorFilter } = this.props;
-      types.forEach((el, i) => !i || array.push(<option key={i - 1} value={el}>{el}</option>));
+      types.forEach((el, i) => array.push(<option key={i} value={el}>{el}</option>));
       return (
         <select
           onChange={({ target }) => this.changePredicate({
@@ -92,7 +93,7 @@ class CreatorDashboard extends React.Component {
     parseUrlForParams = (search) => {
       const obj = queryString.parse(search);
       const filter = {
-        typeIndex: obj.typeIndex || 1,
+        typeIndex: obj.typeIndex || 0,
         contestId: obj.contestId ? obj.contestId : '',
         industry: obj.industry ? obj.industry : '',
         awardSort: obj.awardSort || 'asc',
@@ -233,7 +234,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   getContests: (data) => dispatch(getContestsForCreative(data)),
   clearContestsList: () => dispatch(clearContestList()),
-  newFilter: (filter) => dispatch(setNewCreatorFilter(filter)),
+  newFilter: (filter) =>  dispatch(setNewCreatorFilter(filter)),
   getDataForContest: () => dispatch(getDataForContest()),
 });
 

@@ -13,22 +13,20 @@ const Payment = (props) => {
     const contestArray = [];
     Object.keys(contests).forEach((key) => contestArray.push(contests[key]));
     const { number, expiry, cvc } = values;
+
     const data = new FormData();
+
     for (let i = 0; i < contestArray.length; i++) {
       data.append('files', contestArray[i].file);
       contestArray[i].haveFile = !!contestArray[i].file;
     }
+
     data.append('number', number);
     data.append('expiry', expiry);
     data.append('cvc', cvc);
     data.append('contests', JSON.stringify(contestArray));
     data.append('price', '100');
-    props.pay({
-      data: {
-        formData: data,
-      },
-      history: props.history,
-    });
+    props.pay( data, props.history);
   };
 
   const goBack = () => {
@@ -36,6 +34,7 @@ const Payment = (props) => {
   };
 
   const { contests } = props.contestStore;
+  
   const { error } = props.payment;
   const { clearPaymentStore } = props;
   if (isEmpty(contests)) {
@@ -76,7 +75,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   {
-    pay: ({ data, history }) => dispatch(payRequest(data, history)),
+    pay: (data, history ) => dispatch(payRequest(data, history)),
     clearPaymentStore: () => dispatch(clearPaymentStore()),
   }
 );

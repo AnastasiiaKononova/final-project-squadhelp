@@ -1,62 +1,70 @@
-const bd = require('../models');
-const NotFound = require('../errors/UserNotFoundError');
 const RightsError = require('../errors/RightsError');
 const ServerError = require('../errors/ServerError');
 const CONSTANTS = require('../constants');
+const contestQueries = require ('../controllers/queries/contestQueries');
 
 module.exports.parseBody = (req, res, next) => {
-  req.body.contests = JSON.parse(req.body.contests);
-  for (let i = 0; i < req.body.contests.length; i++) {
-    if (req.body.contests[ i ].haveFile) {
-      const file = req.files.splice(0, 1);
-      req.body.contests[ i ].fileName = file[ 0 ].filename;
-      req.body.contests[ i ].originalFileName = file[ 0 ].originalname;
-    }
+  try {
+    req.body.contests = JSON.parse(req.body.contests);
+  } catch {
+    return next(new ServerError('Invalid contests JSON'));
   }
+
+  if (!Array.isArray(req.body.contests)) {
+    return next(new ServerError('Contests should be an array'));
+  }
+
+  if (!req.files || !Array.isArray(req.files)) {
+    req.files = [];
+  }
+
+  req.body.contests.forEach(contest => {
+    if (contest.haveFile && req.files.length > 0) {
+      const file = req.files.shift();
+      contest.fileName = file.filename;
+      contest.originalFileName = file.originalname;
+    }
+  });
+
   next();
 };
 
 module.exports.canGetContest = async (req, res, next) => {
-  let result = null;
+  const contestId = Number(req.params.id);
+
+  if (isNaN(contestId) || contestId <= 0) {
+    return next(new ServerError('Invalid contest ID'));
+  }
+
   try {
-    if (req.tokenData.role === CONSTANTS.CUSTOMER) {
-      result = await bd.Contests.findOne({
-        where: { id: req.headers.contestid, userId: req.tokenData.userId },
-      });
-    } else if (req.tokenData.role === CONSTANTS.CREATOR) {
-      result = await bd.Contests.findOne({
-        where: {
-          id: req.headers.contestid,
-          status: {
-            [ bd.Sequelize.Op.or ]: [
-              CONSTANTS.CONTEST_STATUS_ACTIVE,
-              CONSTANTS.CONTEST_STATUS_FINISHED,
-            ],
-          },
-        },
-      });
+    const result = await contestQueries.findContestForUser(
+      contestId,
+      req.tokenData.userId,
+      req.tokenData.role,
+    );
+
+    if (!result) {
+      return next(new RightsError('You do not have access to this contest'));
     }
-    result ? next() : next(new RightsError());
-  } catch (e) {
-    next(new ServerError(e));
+
+    next();
+  } catch (err) {
+    next(new ServerError(err));
   }
 };
 
 module.exports.onlyForCreative = (req, res, next) => {
   if (req.tokenData.role === CONSTANTS.CUSTOMER) {
-    next(new RightsError());
-  } else {
-    next();
+    return next(new RightsError());
   }
-
+  next();
 };
 
 module.exports.onlyForCustomer = (req, res, next) => {
   if (req.tokenData.role === CONSTANTS.CREATOR) {
     return next(new RightsError('this page only for customers'));
-  } else {
-    next();
   }
+  next();
 };
 
 module.exports.canSendOffer = async (req, res, next) => {
@@ -64,57 +72,46 @@ module.exports.canSendOffer = async (req, res, next) => {
     return next(new RightsError());
   }
   try {
-    const result = await bd.Contests.findOne({
-      where: {
-        id: req.body.contestId,
-      },
-      attributes: ['status'],
-    });
+    const result = await contestQueries.findContestStatusById(req.body.contestId);
     if (result.get({ plain: true }).status ===
       CONSTANTS.CONTEST_STATUS_ACTIVE) {
       next();
     } else {
       return next(new RightsError());
     }
-  } catch (e) {
-    next(new ServerError());
+  } catch (err) {
+    next(new ServerError(err));
   }
 
 };
 
 module.exports.onlyForCustomerWhoCreateContest = async (req, res, next) => {
   try {
-    const result = await bd.Contests.findOne({
-      where: {
-        userId: req.tokenData.userId,
-        id: req.body.contestId,
-        status: CONSTANTS.CONTEST_STATUS_ACTIVE,
-      },
-    });
+    const result = await contestQueries.findCustomerContestActive(
+      req.tokenData.userId,
+      req.body.contestId,
+    );
     if (!result) {
       return next(new RightsError());
     }
     next();
-  } catch (e) {
-    next(new ServerError());
+  } catch (err) {
+    next(new ServerError(err));
   }
 };
 
 module.exports.canUpdateContest = async (req, res, next) => {
   try {
-    const result = bd.Contests.findOne({
-      where: {
-        userId: req.tokenData.userId,
-        id: req.body.contestId,
-        status: { [ bd.Sequelize.Op.not ]: CONSTANTS.CONTEST_STATUS_FINISHED },
-      },
-    });
+    const result = await contestQueries.findContestNotFinished(
+      req.tokenData.userId,
+      req.body.contestId,
+    );
     if (!result) {
       return next(new RightsError());
     }
     next();
-  } catch (e) {
-    next(new ServerError());
+  } catch (err) {
+    next(new ServerError(err));
   }
 };
 

@@ -1,21 +1,41 @@
 const bd = require('../../models');
 const ServerError = require('../../errors/ServerError');
 
-module.exports.updateRating = async (data, predicate, transaction) => {
+const _updateRating = async (data, predicate, transaction) => {
   const [updatedCount, [updatedRating]] = await bd.Ratings.update(data,
     { where: predicate, returning: true, transaction });
   if (updatedCount !== 1) {
-    throw new ServerError('cannot update mark on this offer');
+    throw new ServerError('Cannot update mark on this offer');
   }
-  return updatedRating.dataValues;
+  return updatedRating.get({ plain: true });
 };
 
-module.exports.createRating = async (data, transaction) => {
-  const result = await bd.Ratings.create(data, { transaction });
-  if (!result) {
-    throw new ServerError('cannot mark offer');
-  } else {
+const _createRating = async (data, transaction) => {
+  try {
+    const result = await bd.Ratings.create(data, { transaction });
     return result.get({ plain: true });
+  } catch {
+    throw new ServerError('Cannot mark offer');
   }
+};
+
+module.exports.createOrUpdateRating = async (data, transaction) => {
+  const { offerId, userId, isFirst } = data;
+  return isFirst ? _createRating(data, transaction) : _updateRating(data, { offerId, userId }, transaction);
+};
+
+module.exports.calcRatingAvgByUser = async (userId, transaction) => {
+  const offersArray = await bd.Ratings.findAll({
+    include: [
+      {
+        model: bd.Offers,
+        required: true,
+        where: { userId },
+      },
+    ],
+    transaction,
+  });
+  const sum = offersArray.reduce((acc, curr) => acc + curr.dataValues.mark, 0);
+  return offersArray.length ? (sum/offersArray.length) : 0 ;
 };
 

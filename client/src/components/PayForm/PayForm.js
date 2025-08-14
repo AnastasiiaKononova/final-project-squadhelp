@@ -23,7 +23,7 @@ const PayForm = (props) => {
       <span className={styles.headerInfo}>Payment Information</span>
       <Formik
         initialValues={{
-          focusOnElement: '', name: '', number: '', cvc: '', expiry: '',
+          focusOnElement: '', name: '', number: '', cvc: '', expiry: '', sum: ''
         }}
         onSubmit={pay}
         validationSchema={Schems.PaymentSchema}

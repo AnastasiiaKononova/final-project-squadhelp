@@ -9,6 +9,7 @@ const ContestInfo = (props) => {
   const {
     changeEditContest, userId, contestData, role, goChat,
   } = props;
+  if (!contestData) return null;
   const {
     typeOfTagline, brandStyle, typeOfName, styleName, contestType,
     title, focusOfWork, targetCustomer, industry, originalFileName,

@@ -1,5 +1,4 @@
-
-
+const { contestScopes } = require('./scopes/ContestScopes');
 module.exports = (sequelize, DataTypes) => {
   const Contest = sequelize.define('Contests', {
     id: {
@@ -87,6 +86,7 @@ module.exports = (sequelize, DataTypes) => {
   },
   {
     timestamps: false,
+    scopes: contestScopes,
   });
 
   return Contest;

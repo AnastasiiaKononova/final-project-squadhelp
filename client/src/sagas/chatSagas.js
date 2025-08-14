@@ -15,7 +15,8 @@ export function* previewSaga() {
 
 export function* getDialog(action) {
   try {
-    const { data } = yield restController.getDialog(action.data);
+    const interlocutorId = action.data.interlocutorId;
+    const { data } = yield restController.getDialog(interlocutorId);
     yield put({ type: ACTION.GET_DIALOG_MESSAGES, data });
   } catch (err) {
     yield put({ type: ACTION.GET_DIALOG_MESSAGES_ERROR, error: err.response });
@@ -118,7 +119,7 @@ export function* createCatalog(action) {
 
 export function* deleteCatalog(action) {
   try {
-    yield restController.deleteCatalog(action.data);
+    yield restController.deleteCatalog(action.data.catalogId);
     const { catalogList } = yield select((state) => state.chatStore);
     const newCatalogList = remove(catalogList, (catalog) => action.data.catalogId !== catalog._id);
     yield put({ type: ACTION.DELETE_CATALOG_SUCCESS, data: newCatalogList });
