@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+const { model, Schema } = require('mongoose');
 
-const Schema = new mongoose.Schema({
+const conversationSchema = new Schema({
   participants: {
     type: [Number],
     required: true,
@@ -18,5 +18,5 @@ const Schema = new mongoose.Schema({
   timestamps: true,
 });
 
-const Conversation = mongoose.model('Conversation', Schema);
+const Conversation = model('Conversation', conversationSchema);
 module.exports = Conversation;

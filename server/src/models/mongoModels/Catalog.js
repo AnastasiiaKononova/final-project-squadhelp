@@ -1,25 +1,23 @@
-const mongoose = require('mongoose');
+const { model, Schema } = require('mongoose');
 
-const Schema = new mongoose.Schema({
+const catalogSchema = new Schema({
   userId: {
-    type: 'Number',
+    type: Number,
     required: true,
   },
   catalogName: {
-    type: 'String',
+    type: String,
     required: true,
   },
   chats: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'Conversation',
-      required: false,
-      unique: false,
     },
   ],
 });
 
-const Catalog = mongoose.model('Catalog', Schema);
+const Catalog = model('Catalog', catalogSchema);
 module.exports = Catalog;
 
 
