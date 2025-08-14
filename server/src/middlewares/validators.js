@@ -7,7 +7,21 @@ module.exports.validateContestCreation = async (req, res, next) => {
     const promiseArray = req.body.contests.map(el => contestSchema.isValid(el));
     const results = await Promise.all(promiseArray);
 
-    const isAllValid = results.every(valid => valid === true);
+    const isAllValid = results.every(async (valid, i) => {
+      if(valid === true) return true;
+      try {
+        await contestSchema.validate(req.body.contests[i], { abortEarly: false });
+      } catch (err) {
+        if (err.name === 'ValidationError') {
+          const errors = err.inner.reduce((acc, curr) => {
+            acc[curr.path] = curr.message;
+            return acc;
+          }, {});
+          return { valid: false, errors };
+        }
+        throw err;
+      }
+    });
     if (!isAllValid) {
       return next(new BadRequestError('One or more contests are invalid'));
     }
