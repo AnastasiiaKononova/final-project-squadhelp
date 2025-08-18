@@ -1,8 +1,8 @@
-const bd = require('../../models');
+const db = require('../../models');
 const ServerError = require('../../errors/ServerError');
 
 module.exports.updateOffer = async (data, predicate, transaction) => {
-  const [updatedCount, [updatedOffer]] = await bd.Offers.update(data,
+  const [updatedCount, [updatedOffer]] = await db.Offer.update(data,
     { where: predicate, returning: true, transaction });
   if (updatedCount !== 1) {
     throw new ServerError('cannot update offer!');
@@ -12,7 +12,7 @@ module.exports.updateOffer = async (data, predicate, transaction) => {
 };
 
 module.exports.updateOfferStatus = async (data, predicate, transaction) => {
-  const result = await bd.Offers.update(data,
+  const result = await db.Offer.update(data,
     { where: predicate, returning: true, transaction });
   if (result[ 0 ] < 1) {
     throw new ServerError('cannot update offer!');
@@ -22,7 +22,7 @@ module.exports.updateOfferStatus = async (data, predicate, transaction) => {
 };
 
 module.exports.createOffer = async (data) => {
-  const result = await bd.Offers.create(data);
+  const result = await db.Offer.create(data);
   if (!result) {
     throw new ServerError('cannot create new Offer');
   } else {

@@ -1,4 +1,4 @@
-const bd = require('../models');
+const db = require('../models');
 const ws = require('../socketInit');
 const userQueries = require('./queries/userQueries');
 const ratingQueries = require('./queries/ratingQueries');
@@ -9,8 +9,8 @@ module.exports.changeMark = async (req, res, next) => {
   const { userId } = req.tokenData;
 
   try {
-    transaction = await bd.sequelize.transaction(
-      { isolationLevel: bd.Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED });
+    transaction = await db.sequelize.transaction(
+      { isolationLevel: db.Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED });
 
     await ratingQueries.createOrUpdateRating({ offerId, userId, mark, isFirst }, transaction);
     const avg = await ratingQueries.calcRatingAvgByUser(creatorId, transaction);

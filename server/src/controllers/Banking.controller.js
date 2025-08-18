@@ -1,4 +1,4 @@
-const bd = require('../models');
+const db = require('../models');
 const { transferFunds } = require('./queries/bankQueries');
 const { calculatePrize, generateOrder } = require('../utils/orderHelper');
 const NotEnoughMoney = require('../errors/NotEnoughMoney');
@@ -11,7 +11,7 @@ module.exports.payment = async (req, res, next) => {
 
   let transaction;
   try {
-    transaction = await bd.sequelize.transaction();
+    transaction = await db.sequelize.transaction();
 
     await transferFunds({
       userCardNumber,
@@ -38,7 +38,7 @@ module.exports.payment = async (req, res, next) => {
       };
     });
 
-    await bd.Contests.bulkCreate(contestsData, { transaction });
+    await db.Contest.bulkCreate(contestsData, { transaction });
 
     await transaction.commit();
 
@@ -55,7 +55,7 @@ module.exports.cashout = async (req, res, next) => {
 
   let transaction;
   try {
-    transaction = await bd.sequelize.transaction();
+    transaction = await db.sequelize.transaction();
 
     const user = await findUserWithLock(req.tokenData.userId, transaction);
 

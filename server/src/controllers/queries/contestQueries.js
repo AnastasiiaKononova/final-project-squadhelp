@@ -1,10 +1,10 @@
-const bd = require('../../models');
+const db = require('../../models');
 const ServerError = require('../../errors/ServerError');
 const { fn, col } = require('sequelize');
 const CONSTANTS = require('../../constants');
 
 module.exports.updateContest = async (data, predicate, transaction) => {
-  const [updatedCount, updatedRows] = await bd.Contests.update(data, {
+  const [updatedCount, updatedRows] = await db.Contest.update(data, {
     where: predicate,
     returning: true,
     transaction,
@@ -20,7 +20,7 @@ module.exports.updateContest = async (data, predicate, transaction) => {
 };
 
 module.exports.updateContestStatus = async (data, predicate, transaction) => {
-  const updateResult = await bd.Contests.update(data, {
+  const updateResult = await db.Contest.update(data, {
     where: predicate,
     returning: true,
     transaction,
@@ -37,7 +37,7 @@ module.exports.getContests = async (req) => {
   const limit = parseInt(req.query.limit, 10) || 10;
   const offset = parseInt(req.query.offset, 10) || 0;
   const ownEntries = req.query.ownEntries === 'true' || req.query.ownEntries === '1';
-  return  await bd.Contests
+  return  await db.Contest
     .scope([
       { method: ['byTypeIndex', typeIndex] },
       { method: ['byIndustry', industry] },
@@ -57,7 +57,7 @@ module.exports.getContests = async (req) => {
       },
       include: [
         {
-          model: bd.Offers,
+          model: db.Offer,
           required: ownEntries,
           where: ownEntries ? { userId: req.tokenData.userId } : {},
           attributes: [],
@@ -70,7 +70,7 @@ module.exports.getContests = async (req) => {
 
 module.exports.getCustomerContests = async (query, userId) => {
   const { contestStatus, limit, offset } = query;
-  return await bd.Contests.scope([
+  return await db.Contest.scope([
     { method: ['byUser', parseInt(userId)] },
     { method: ['byStatus', contestStatus] },
     'orderByIdDesc',
@@ -86,30 +86,30 @@ module.exports.getCustomerContests = async (query, userId) => {
     },
     include: [
       {
-        model: bd.Offers,
+        model: db.Offer,
         required: false,
         attributes: [],
       },
     ],
-    group: ['Contests.id'],
+    group: ['Contest.id'],
     subQuery: false,
   });
 };
 
 module.exports.getContestById = async (contestId, userId, role) => {
-  const contestInfo = await bd.Contests.findOne({
+  const contestInfo = await db.Contest.findOne({
     where: { id: contestId },
-    order: [[bd.Offers, 'id', 'asc']],
+    order: [[db.Offer, 'id', 'asc']],
     include: [
       {
-        model: bd.Users,
+        model: db.User,
         required: true,
         attributes: {
           exclude: ['password', 'role', 'balance', 'accessToken'],
         },
       },
       {
-        model: bd.Offers,
+        model: db.Offer,
         required: false,
         where: role === CONSTANTS.CREATOR ? { userId } : {},
         attributes: {
@@ -117,14 +117,14 @@ module.exports.getContestById = async (contestId, userId, role) => {
         },
         include: [
           {
-            model: bd.Users,
+            model: db.User,
             required: true,
             attributes: {
               exclude: ['password', 'role', 'balance', 'accessToken'],
             },
           },
           {
-            model: bd.Ratings,
+            model: db.Rating,
             required: false,
             where: { userId },
             attributes: ['mark'],
@@ -144,18 +144,18 @@ module.exports.getContestById = async (contestId, userId, role) => {
 
 module.exports.findContestForUser = async (contestId, userId, role) => {
   if (role === CONSTANTS.CUSTOMER) {
-    return bd.Contests.findOne({
+    return db.Contest.findOne({
       where: {
         id: contestId,
         userId,
       },
     });
   } else if (role === CONSTANTS.CREATOR) {
-    return bd.Contests.findOne({
+    return db.Contest.findOne({
       where: {
         id: contestId,
         status: {
-          [bd.Sequelize.Op.or]: [
+          [db.Sequelize.Op.or]: [
             CONSTANTS.CONTEST_STATUS_ACTIVE,
             CONSTANTS.CONTEST_STATUS_FINISHED,
           ],
@@ -167,14 +167,14 @@ module.exports.findContestForUser = async (contestId, userId, role) => {
 };
 
 module.exports.findContestStatusById = async (contestId) => {
-  return bd.Contests.findOne({
+  return db.Contest.findOne({
     where: { id: contestId },
     attributes: ['status'],
   });
 };
 
 module.exports.findCustomerContestActive = async (userId, contestId) => {
-  return bd.Contests.findOne({
+  return db.Contest.findOne({
     where: {
       userId,
       id: contestId,
@@ -184,11 +184,11 @@ module.exports.findCustomerContestActive = async (userId, contestId) => {
 };
 
 module.exports.findContestNotFinished = async (userId, contestId) => {
-  return bd.Contests.findOne({
+  return db.Contest.findOne({
     where: {
       userId,
       id: contestId,
-      status: { [bd.Sequelize.Op.not]: CONSTANTS.CONTEST_STATUS_FINISHED },
+      status: { [db.Sequelize.Op.not]: CONSTANTS.CONTEST_STATUS_FINISHED },
     },
   });
 };

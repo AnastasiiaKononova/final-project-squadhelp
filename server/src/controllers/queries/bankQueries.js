@@ -1,4 +1,4 @@
-const bd = require('../../models');
+const db = require('../../models');
 const BankDeclineError = require('../../errors/BankDeclineError');
 const CONSTANTS = require('../../constants');
 const NotEnoughMoney = require('../../errors/NotEnoughMoney');
@@ -6,7 +6,7 @@ const NotEnoughMoney = require('../../errors/NotEnoughMoney');
 
 module.exports.transferFunds = async ({ userCardNumber, cvc, expiry, amount, transaction }) => {
   const findAccountOrThrow = async (where, errorMessage) => {
-    const account = await bd.Banks.findOne({
+    const account = await db.Bank.findOne({
       where,
       transaction,
       lock: transaction.LOCK.UPDATE,
