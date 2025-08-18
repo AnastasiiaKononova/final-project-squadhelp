@@ -1,4 +1,4 @@
-const Conversation = require('../../models/mongoModels/conversation');
+const { Conversation } = require('../../models/mongoModels');
 const BadRequestError = require('../../errors/BadRequestError');
 const NotFoundError = require('../../errors/NotFoundError');
 
