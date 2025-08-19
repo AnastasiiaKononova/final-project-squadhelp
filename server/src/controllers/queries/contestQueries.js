@@ -63,7 +63,7 @@ module.exports.getContests = async (req) => {
           attributes: [],
         },
       ],
-      group: ['Contests.id'],
+      group: ['Contest.id'],
       subQuery: false,
     });
 };
