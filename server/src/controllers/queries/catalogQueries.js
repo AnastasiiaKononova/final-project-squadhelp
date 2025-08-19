@@ -1,4 +1,4 @@
-const Catalog = require('../../models/mongoModels/Catalog');
+const { Catalog } = require('../../models/mongoModels');
 const NotFoundError = require('../../errors/NotFoundError');
 
 module.exports.createCatalog = async ({ userId, catalogName, chatId }) => {

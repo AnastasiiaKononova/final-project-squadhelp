@@ -1,9 +1,9 @@
-const bd = require('../../models');
+const db = require('../../models');
 const UserNotFoundError = require('../../errors/UserNotFoundError');
 const ServerError = require('../../errors/ServerError');
 
 module.exports.updateUser = async (data, userId, transaction) => {
-  const [updatedCount, [updatedUser]] = await bd.Users.update(data, {
+  const [updatedCount, [updatedUser]] = await db.User.update(data, {
     where: { id: userId },
     returning: true,
     transaction });
@@ -16,7 +16,7 @@ module.exports.updateUser = async (data, userId, transaction) => {
 };
 
 module.exports.findUser = async (predicate, transaction) => {
-  const result = await bd.Users.findOne({ where: predicate, transaction });
+  const result = await db.User.findOne({ where: predicate, transaction });
 
   if (!result) {
     throw new UserNotFoundError('User with specified data does not exist');
@@ -27,7 +27,7 @@ module.exports.findUser = async (predicate, transaction) => {
 
 module.exports.userCreation = async (data) => {
   try {
-    const newUser = await bd.Users.create(data);
+    const newUser = await db.User.create(data);
     return newUser.get({ plain: true });
   } catch (err) {
     throw new ServerError('User creation failed');
@@ -35,14 +35,14 @@ module.exports.userCreation = async (data) => {
 };
 
 module.exports.getUsersByIds = async function (ids) {
-  return await bd.Users.findAll({
+  return await db.User.findAll({
     where: { id: ids },
     attributes: ['id', 'firstName', 'lastName', 'displayName', 'avatar'],
   });
 };
 
 module.exports.findUserWithLock = async (userId, transaction) => {
-  const user = await bd.Users.findOne({
+  const user = await db.User.findOne({
     where: { id: userId },
     transaction,
     lock: transaction.LOCK.UPDATE,

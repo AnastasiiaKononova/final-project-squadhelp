@@ -1,4 +1,4 @@
-const Message = require('../../models/mongoModels/Message');
+const { Message } = require('../../models/mongoModels');
 
 module.exports.getMessagesByParticipants = async function (participants) {
   return Message.aggregate([
