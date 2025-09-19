@@ -1,15 +1,24 @@
+const constraintErrors = {
+  Banks_balance_ck: {
+    code: 406,
+    message: 'Not Enough money',
+  },
+  Users_balance_ck: {
+    code: 406,
+    message: 'Not Enough money',
+  },
+};
+
 module.exports = (err, req, res, next) => {
-  console.log(err);
-  if (err.message ===
-    'new row for relation "Banks" violates check constraint "Banks_balance_ck"' ||
-    err.message ===
-    'new row for relation "Users" violates check constraint "Users_balance_ck"') {
-    err.message = 'Not Enough money';
-    err.code = 406;
+
+  if (err.constraint && constraintErrors[err.constraint]) {
+    const { code, message } = constraintErrors[err.constraint];
+    return res.status(code).json({ message });
   }
-  if (!err.message || !err.code) {
-    res.status(500).send('Server Error');
-  } else {
-    res.status(err.code).send(err.message);
+
+  if (err.code && err.message) {
+    return res.status(err.code).json({ message: err.message });
   }
+
+  res.status(500).json({ message : 'Server Error' });
 };
