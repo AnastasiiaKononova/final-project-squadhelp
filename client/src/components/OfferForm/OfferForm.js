@@ -6,7 +6,7 @@ import { setOffer, clearAddOfferError } from '../../actions/actionCreator';
 import styles from './OfferForm.module.sass';
 import ImageUpload from '../InputComponents/ImageUpload/ImageUpload';
 import FormInput from '../FormInput/FormInput';
-import Schems from '../../validators/validationSchems';
+import { logoOfferSchema, textOfferSchema } from '../../validationSchemes';
 import Error from '../Error/Error';
 
 const OfferForm = (props) => {
@@ -38,42 +38,54 @@ const OfferForm = (props) => {
     );
   };
 
-  const setOffer = (values, { resetForm }) => {
+  const setOffer = (values, formikHelpers) => {
+    const {resetForm} = formikHelpers;
+    const {contestId, contestType, customerId} = props;
     props.clearOfferError();
+
     const data = new FormData();
-    const { contestId, contestType, customerId } = props;
     data.append('contestId', contestId);
     data.append('contestType', contestType);
     data.append('offerData', values.offerData);
     data.append('customerId', customerId);
-    props.setNewOffer(data);
-    resetForm();
+
+    console.log('Submitting FormData: ', values.offerData);
+
+    props.setNewOffer(data, resetForm);
   };
 
-  const { valid, addOfferError, clearOfferError } = props;
-  const validationSchema = props.contestType === CONTANTS.LOGO_CONTEST ? Schems.LogoOfferSchema : Schems.TextOfferSchema;
+  const { addOfferError, clearOfferError } = props;
+  const validationSchema = props.contestType === CONTANTS.LOGO_CONTEST ? logoOfferSchema : textOfferSchema;
+  
   return (
     <div className={styles.offerContainer}>
-      {addOfferError
-            && <Error data={addOfferError.data} status={addOfferError.status} clearError={clearOfferError} />}
+      {addOfferError && (
+        <Error 
+          data={addOfferError.data} 
+          status={addOfferError.status} 
+          clearError={clearOfferError} 
+          />
+        )}
       <Formik
         onSubmit={setOffer}
-        initialValues={{
-          offerData: '',
-        }}
+        initialValues={{ offerData: '' }}
         validationSchema={validationSchema}
       >
+        {({ values }) => (
         <Form className={styles.form}>
           {renderOfferInput()}
-          {valid && <button type="submit" className={styles.btnOffer}>Send Offer</button>}
+          <button type="submit" className={styles.btnOffer}>
+              Send Offer
+          </button>
         </Form>
+        )}
       </Formik>
     </div>
   );
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  setNewOffer: (data) => dispatch(setOffer(data)),
+  setNewOffer: (data, resetForm) => dispatch(setOffer(data, resetForm)),
   clearOfferError: () => dispatch(clearAddOfferError()),
 });
 

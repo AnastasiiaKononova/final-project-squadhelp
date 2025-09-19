@@ -48,7 +48,7 @@ class CreatorDashboard extends React.Component {
           onChange={({ target }) => this.changePredicate({
             name: 'industry',
             value: target.value,
-          })}
+          })}        
           value={creatorFilter.industry}
           className={styles.input}
         >
@@ -65,7 +65,8 @@ class CreatorDashboard extends React.Component {
 
     componentDidMount() {
       this.props.getDataForContest();
-      if (this.parseUrlForParams(this.props.location.search) && !this.props.contests.length) this.getContests(this.props.creatorFilter);
+      if (this.parseUrlForParams(this.props.location.search) && !this.props.contests.length) 
+        this.getContests(this.props.creatorFilter);
     }
 
     getContests = (filter) => {
@@ -93,7 +94,7 @@ class CreatorDashboard extends React.Component {
     parseUrlForParams = (search) => {
       const obj = queryString.parse(search);
       const filter = {
-        typeIndex: obj.typeIndex || 0,
+        typeIndex: obj.typeIndex,
         contestId: obj.contestId ? obj.contestId : '',
         industry: obj.industry ? obj.industry : '',
         awardSort: obj.awardSort || 'asc',
@@ -104,7 +105,8 @@ class CreatorDashboard extends React.Component {
         this.props.clearContestsList();
         this.getContests(filter);
         return false;
-      } return true;
+      } 
+      return true;
     };
 
     getPredicateOfRequest = () => {
@@ -152,6 +154,7 @@ class CreatorDashboard extends React.Component {
     render() {
       const { error, haveMore, creatorFilter } = this.props;
       const { isFetching } = this.props.dataForContest;
+
       return (
         <div className={styles.mainContainer}>
           <div className={styles.filterContainer}>

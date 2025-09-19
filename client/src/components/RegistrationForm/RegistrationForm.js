@@ -9,14 +9,14 @@ import RoleInput from '../RoleInput/RoleInput';
 import AgreeTermOfServiceInput
   from '../AgreeTermOfServiceInput/AgreeTermOfServiceInput';
 import CONSTANTS from '../../constants';
-import Schems from '../../validators/validationSchems';
+import { registrationSchema } from '../../validationSchemes';
 
 class RegistrationForm extends React.Component {
   componentWillUnmount() {
     this.props.authClear();
   }
 
-    clicked = (values) => {
+    submitForm = (values) => {
       this.props.register({
         data: {
           firstName: values.firstName,
@@ -31,8 +31,10 @@ class RegistrationForm extends React.Component {
     };
 
     render() {
+      
       const { submitting, auth, authClear } = this.props;
       const { error } = auth;
+
       const formInputClasses = {
         container: styles.inputContainer,
         input: styles.input,
@@ -68,8 +70,8 @@ class RegistrationForm extends React.Component {
               role: CONSTANTS.CUSTOMER,
               agreeOfTerms: false,
             }}
-            onSubmit={this.clicked}
-            validationSchema={Schems.RegistrationSchem}
+            onSubmit={this.submitForm}
+            validationSchema={registrationSchema}
           >
             <Form>
               <div className={styles.row}>

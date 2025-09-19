@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import styles from './PayForm.module.sass';
 import { changeFocusOnCard } from '../../actions/actionCreator';
 import PayInput from '../InputComponents/PayInput/PayInput';
-import Schems from '../../validators/validationSchems';
+import { paymentSchema, cashoutSchema} from '../../validationSchemes';
 
 const PayForm = (props) => {
   const changeFocusOnCard = (name) => {
@@ -26,7 +26,7 @@ const PayForm = (props) => {
           focusOnElement: '', name: '', number: '', cvc: '', expiry: '', sum: ''
         }}
         onSubmit={pay}
-        validationSchema={Schems.PaymentSchema}
+        validationSchema={isPayForOrder ? paymentSchema : cashoutSchema}
       >
         {({ values }) => {
           const {

@@ -4,7 +4,7 @@ import { Field, Form, Formik } from 'formik';
 import { authActionLogin, clearAuth } from '../../actions/actionCreator';
 import styles from './LoginForm.module.sass';
 import FormInput from '../FormInput/FormInput';
-import Schems from '../../validators/validationSchems';
+import { loginSchema } from '../../validationSchemes';
 import Error from '../Error/Error';
 
 class LoginForm extends React.Component {
@@ -44,7 +44,7 @@ class LoginForm extends React.Component {
               password: '',
             }}
             onSubmit={this.clicked}
-            validationSchema={Schems.LoginSchem}
+            validationSchema={loginSchema}
           >
             <Form>
               <FormInput
