@@ -1,26 +1,22 @@
 import React from 'react';
 import styles from './Error.module.sass';
 
-const Error = (props) => {
+const defaultMessages = {
+  400: 'Check the inpit data',
+  401: 'Unauthorized',
+  403: 'Bank declined transaction',   
+  404: 'Resource not found', 
+  406: 'Not enough money',
+  409: 'Conflict occurred / email already exists',
+  500: 'Server Error', 
+}
+
+const Error = ({status, data, clearError}) => {
   const getMessage = () => {
-    const { status, data } = props;
-    switch (status) {
-      case 404:
-        return data;
-      case 400:
-        return 'Check the input data';
-      case 409:
-        return data;
-      case 403:
-        return 'Bank decline transaction';
-      case 406:
-        return data;
-      default:
-        return 'Server Error';
-    }
+    if (data) return data;
+    return defaultMessages[status] || 'Server Error';
   };
 
-  const { clearError } = props;
   return (
     <div className={styles.errorContainer}>
       <span>{getMessage()}</span>
@@ -30,3 +26,6 @@ const Error = (props) => {
 };
 
 export default Error;
+
+
+
