@@ -22,7 +22,7 @@ export default function (state = initialState, action) {
     case ACTION.AUTH_ACTION_ERROR: {
       return {
         isFetching: false,
-        error: action.error,
+        error: action.error || null,
       };
     }
     case ACTION.AUTH_ACTION_CLEAR_ERROR: {
