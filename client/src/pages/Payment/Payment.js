@@ -12,7 +12,7 @@ const Payment = (props) => {
     const { contests } = props.contestStore;
     const contestArray = [];
     Object.keys(contests).forEach((key) => contestArray.push(contests[key]));
-    const { number, expiry, cvc } = values;
+    const { number, expiry, cvc, name } = values;
 
     const data = new FormData();
 
@@ -21,6 +21,8 @@ const Payment = (props) => {
       contestArray[i].haveFile = !!contestArray[i].file;
     }
 
+
+    data.append('name', name);
     data.append('number', number);
     data.append('expiry', expiry);
     data.append('cvc', cvc);
@@ -48,7 +50,10 @@ const Payment = (props) => {
       <div className={styles.mainContainer}>
         <div className={styles.paymentContainer}>
           <span className={styles.headerLabel}>Checkout</span>
-          {error && <Error data={error.data} status={error.status} clearError={clearPaymentStore} />}
+          {error && <Error errors={error.data.errors} 
+                           data={error.data}
+                           status={error.status} 
+                           clearError={clearPaymentStore} />}
           <PayForm sendRequest={pay} back={goBack} isPayForOrder />
         </div>
         <div className={styles.orderInfoContainer}>
