@@ -1,8 +1,7 @@
 const db = require('../../models');
 const BankDeclineError = require('../../errors/BankDeclineError');
 const CONSTANTS = require('../../constants');
-const NotEnoughMoney = require('../../errors/NotEnoughMoney');
-
+const NotEnoughMoneyError = require('../../errors/NotEnoughMoney');
 
 module.exports.transferFunds = async ({ userCardNumber, cvc, expiry, amount, transaction }) => {
   const findAccountOrThrow = async (where, errorMessage) => {
@@ -32,11 +31,11 @@ module.exports.transferFunds = async ({ userCardNumber, cvc, expiry, amount, tra
   const failedCheck = [
     {
       condition: amount > 0 && userBankAccount.balance < amount,
-      error: new NotEnoughMoney('Not enough money on user card'),
+      error: new NotEnoughMoneyError('Not enough money on user card'),
     },
     {
       condition: amount < 0 && internalBankAccount.balance < Math.abs(amount),
-      error: new NotEnoughMoney('Not enough money on company account'),
+      error: new NotEnoughMoneyError('Not enough money on company account'),
     },
   ].find(({ condition }) => condition);
 

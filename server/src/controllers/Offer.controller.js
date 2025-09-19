@@ -4,7 +4,6 @@ const offerQueries = require('./queries/offerQueries');
 const ws = require('../socketInit');
 const CONSTANTS = require('../constants');
 
-
 module.exports.setNewOffer = async (req, res, next) => {
 
   const obj = {};

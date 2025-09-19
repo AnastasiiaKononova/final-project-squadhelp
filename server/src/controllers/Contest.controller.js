@@ -1,8 +1,9 @@
 const path = require('path');
-const ServerError =require('../errors/ServerError');
-const NotFoundError = require('../errors/NotFoundError');
 const contestQueries = require('./queries/contestQueries');
 const CONSTANTS = require('../constants');
+const BadRequestError = require('../errors/BadRequestError');
+const NotFoundError = require('../errors/NotFoundError');
+
 
 module.exports.getContestById = async (req, res, next) => {
   try {
@@ -14,7 +15,7 @@ module.exports.getContestById = async (req, res, next) => {
     const contest = await contestQueries.getContestById(contestId, userId, role);
     res.send(contest);
   }catch (err) {
-    next(new ServerError(err.message));
+    next(err);
   }
 };
 
@@ -24,11 +25,11 @@ module.exports.downloadFile = async (req, res, next) => {
     const file = path.join(CONSTANTS.CONTESTS_DEFAULT_DIR, filename);
     res.download(file, (err) => {
       if (err) {
-        next(new NotFoundError());
+        next(new NotFoundError('File not found'));
       }
     });
   } catch (err) {
-    next(new ServerError(err.message));
+    next(err);
   }
 };
 
@@ -37,7 +38,7 @@ module.exports.updateContest = async (req, res, next) => {
   const userId = req.tokenData?.userId;
 
   if (!contestId) {
-    return next(new ServerError('Invalid contest'));
+    return next(new BadRequestError('Invalid contest'));
   }
 
   try {
@@ -56,7 +57,7 @@ module.exports.updateContest = async (req, res, next) => {
     });
     res.send(updatedContest);
   } catch (err) {
-    next(new ServerError(err.message));
+    next(err);
   }
 };
 
@@ -67,7 +68,7 @@ module.exports.getCustomersContests = async (req, res, next) => {
     const haveMore = contests.length === Number(query.limit);
     res.status(200).send({ contests, haveMore });
   } catch (err) {
-    next(new ServerError(err.message));
+    next(err);
   }
 };
 
@@ -77,7 +78,7 @@ module.exports.getContests = async (req, res, next) => {
     const haveMore = contests.length > 0;
     res.send({ contests, haveMore });
   } catch (err) {
-    next(new ServerError(err.message));
+    next(err);
   }
 };
 

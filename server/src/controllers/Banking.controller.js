@@ -1,8 +1,6 @@
 const db = require('../models');
 const { transferFunds } = require('./queries/bankQueries');
 const { calculatePrize, generateOrder } = require('../utils/orderHelper');
-const NotEnoughMoney = require('../errors/NotEnoughMoney');
-const ServerError = require('../errors/ServerError');
 const { findUserWithLock } = require('./queries/userQueries');
 
 module.exports.payment = async (req, res, next) => {
@@ -59,14 +57,6 @@ module.exports.cashout = async (req, res, next) => {
 
     const user = await findUserWithLock(req.tokenData.userId, transaction);
 
-    if (!user) {
-      throw new ServerError('User not found');
-    }
-
-    if (user.balance < payoutAmount) {
-      throw new NotEnoughMoney('Not enough funds on your account');
-    }
-
     await transferFunds({
       userCardNumber,
       cvc: req.body.cvc,
@@ -75,7 +65,6 @@ module.exports.cashout = async (req, res, next) => {
       transaction,
     });
 
-    user.balance -= payoutAmount;
     await user.save({ transaction });
 
     await transaction.commit();
