@@ -1,10 +1,10 @@
 const ApplicationError = require('./ApplicationError');
 
-class NotEnoughMoney extends ApplicationError{
-  constructor (message) {
-    super(message || 'Not enough money', 417);
+class NotEnoughMoneyError extends ApplicationError{
+  constructor (message = 'Not enough money') {
+    super(message, 406);
   }
 }
 
-module.exports = NotEnoughMoney;
+module.exports = NotEnoughMoneyError;
 

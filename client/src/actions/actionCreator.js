@@ -89,9 +89,10 @@ export const changeMark = (data) => ({
   data,
 });
 
-export const setOffer = (data) => ({
+export const setOffer = (data, resetForm) => ({
   type: ACTION.SET_OFFER_ACTION,
   data,
+  resetForm
 });
 
 export const setOfferStatus = (data) => ({
@@ -292,3 +293,5 @@ export const changeModalShow = (data) => ({
   type: ACTION.CHANGE_SHOW_MODAL,
   data,
 });
+
+

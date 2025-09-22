@@ -17,6 +17,7 @@ bankingRouter.post(
 bankingRouter.post(
   '/withdraw',
   basicMiddlewares.onlyForCreative,
+  validators.validateCashout,
   BankingController.cashout,
 );
 

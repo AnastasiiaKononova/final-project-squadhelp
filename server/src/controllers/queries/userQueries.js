@@ -1,6 +1,7 @@
 const db = require('../../models');
-const UserNotFoundError = require('../../errors/UserNotFoundError');
+const NotFoundError = require('../../errors/NotFoundError');
 const ServerError = require('../../errors/ServerError');
+const NotUniqueEmailError = require('../../errors/NotUniqueEmail');
 
 module.exports.updateUser = async (data, userId, transaction) => {
   const [updatedCount, [updatedUser]] = await db.User.update(data, {
@@ -19,7 +20,7 @@ module.exports.findUser = async (predicate, transaction) => {
   const result = await db.User.findOne({ where: predicate, transaction });
 
   if (!result) {
-    throw new UserNotFoundError('User with specified data does not exist');
+    throw new NotFoundError('User not found');
   }
 
   return result.get({ plain: true });
@@ -30,7 +31,10 @@ module.exports.userCreation = async (data) => {
     const newUser = await db.User.create(data);
     return newUser.get({ plain: true });
   } catch (err) {
-    throw new ServerError('User creation failed');
+    if (err.name === 'SequelizeUniqueConstraintError') {
+      throw new NotUniqueEmailError();
+    }
+    throw new ServerError();
   }
 };
 
@@ -49,7 +53,7 @@ module.exports.findUserWithLock = async (userId, transaction) => {
   });
 
   if (!user) {
-    throw new UserNotFoundError('User not found');
+    throw new NotFoundError('User not found');
   }
 
   return user;

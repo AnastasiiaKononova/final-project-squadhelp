@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "card-validator": "^10.0.3",
     "cors": "^2.8.5",
     "dotenv": "^9.0.0",
     "express": "^4.16.3",

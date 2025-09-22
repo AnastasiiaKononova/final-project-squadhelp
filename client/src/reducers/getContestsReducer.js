@@ -1,5 +1,6 @@
 import ACTION from '../actions/actionTypes';
 import CONSTANTS from '../constants';
+import {normalizeError} from '../utils/normalizeError';
 
 const initialState = {
   isFetching: true,
@@ -38,7 +39,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         isFetching: false,
-        error: action.error,
+        error: normalizeError(action.error),
         contests: [],
       };
     }

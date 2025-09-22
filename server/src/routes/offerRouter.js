@@ -2,11 +2,13 @@ const offerRouter = require('express').Router();
 const upload = require('../utils/fileUpload');
 const basicMiddlewares = require('../middlewares/basicMiddlewares');
 const OfferController = require('../controllers/Offer.controller');
+const offerTypeValidator = require('../middlewares/offerTypeValidator');
 
 offerRouter.post(
   '/',
   upload.uploadLogoFiles,
   basicMiddlewares.canSendOffer,
+  offerTypeValidator,
   OfferController.setNewOffer,
 );
 

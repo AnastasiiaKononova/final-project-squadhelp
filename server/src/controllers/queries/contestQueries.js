@@ -1,5 +1,6 @@
 const db = require('../../models');
 const ServerError = require('../../errors/ServerError');
+const NotFoundError = require('../../errors/NotFoundError');
 const { fn, col } = require('sequelize');
 const CONSTANTS = require('../../constants');
 
@@ -13,7 +14,7 @@ module.exports.updateContest = async (data, predicate, transaction) => {
   const updatedContest = updatedRows[0];
 
   if (updatedCount < 1 || !updatedContest) {
-    throw new ServerError('Contest not found or cannot update');
+    throw new NotFoundError('Contest not found or cannot update');
   }
 
   return updatedContest.get({ plain: true });
@@ -34,7 +35,7 @@ module.exports.updateContestStatus = async (data, predicate, transaction) => {
 
 module.exports.getContests = async (req) => {
   const { typeIndex, industry, awardSort } = req.query;
-  const limit = parseInt(req.query.limit, 10) || 10;
+  const limit = parseInt(req.query.limit, 8) || 8;
   const offset = parseInt(req.query.offset, 10) || 0;
   const ownEntries = req.query.ownEntries === 'true' || req.query.ownEntries === '1';
   return  await db.Contest
@@ -136,7 +137,7 @@ module.exports.getContestById = async (contestId, userId, role) => {
   });
 
   if (!contestInfo) {
-    throw new ServerError('Contest not found');
+    throw new NotFoundError('Contest not found');
   }
 
   return contestInfo.get({ plain: true });

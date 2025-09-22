@@ -4,7 +4,8 @@ import { Formik, Form } from 'formik';
 import { changeShowModeCatalog, changeRenameCatalogMode, changeCatalogName } from '../../../../actions/actionCreator';
 import styles from './CatalogHeader.module.sass';
 import FormInput from '../../../FormInput/FormInput';
-import Schems from '../../../../validators/validationSchems';
+import { catalogSchema } from '../../../../validationSchemes';
+
 
 const CatalogListHeader = (props) => {
   const changeCatalogName = (values) => {
@@ -28,7 +29,7 @@ const CatalogListHeader = (props) => {
         <Formik
           onSubmit={changeCatalogName}
           initialValues={props.initialValues}
-          validationSchema={Schems.CatalogSchema}
+          validationSchema={catalogSchema}
         >
           <Form>
             <FormInput

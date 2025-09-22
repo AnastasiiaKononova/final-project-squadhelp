@@ -4,7 +4,7 @@ import { Formik, Form } from 'formik';
 import FormInput from '../../../FormInput/FormInput';
 import styles from './CreateCatalog.module.sass';
 import { createCatalog } from '../../../../actions/actionCreator';
-import Schems from '../../../../validators/validationSchems';
+import { catalogSchema } from '../../../../validationSchemes';
 
 const CreateCatalog = (props) => {
   const click = (values) => {
@@ -16,7 +16,7 @@ const CreateCatalog = (props) => {
     <Formik
       onSubmit={click}
       initialValues={{ catalogName: '' }}
-      validationSchema={Schems.CatalogSchema}
+      validationSchema={catalogSchema}
     >
       <Form className={styles.form}>
         <FormInput

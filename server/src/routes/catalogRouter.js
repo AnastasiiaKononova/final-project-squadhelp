@@ -1,8 +1,10 @@
 const catalogRouter = require('express').Router();
 const CatalogController = require('../controllers/Catalog.controller');
+const validators = require('../middlewares/validators');
 
 catalogRouter.post(
   '/',
+  validators.validateCatalog,
   CatalogController.createCatalog,
 );
 
@@ -13,6 +15,7 @@ catalogRouter.get(
 
 catalogRouter.put(
   '/:id',
+  validators.validateCatalog,
   CatalogController.updateNameCatalog,
 );
 

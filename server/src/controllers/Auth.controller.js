@@ -1,12 +1,14 @@
 const userQueries = require('./queries/userQueries');
 const { generateAccessToken, passwordCompare } = require('../utils/authUtils');
-const NotUniqueEmail = require('../errors/NotUniqueEmail');
-const UserNotFoundError = require('../errors/UserNotFoundError');
+const BadRequestError = require ('../errors/BadRequestError');
 
 module.exports.login = async (req, res, next) => {
   try {
     const foundUser = await userQueries.findUser({ email: req.body.email });
-    await passwordCompare(req.body.password, foundUser.password);
+    const valid = await passwordCompare(req.body.password, foundUser.password);
+    if (!valid) {
+      throw new BadRequestError('Invalid email or password');
+    }
 
     const accessToken = generateAccessToken(foundUser);
     await userQueries.updateUser({ accessToken }, foundUser.id);
@@ -30,13 +32,10 @@ module.exports.registration = async (req, res, next) => {
 
     res.send({ token: accessToken });
   } catch (err) {
-    if (err.name === 'SequelizeUniqueConstraintError') {
-      next(new NotUniqueEmail());
-    } else {
-      next(err);
-    }
+    next(err);
   }
 };
+
 
 module.exports.me = async (req, res, next) => {
   try {
@@ -54,9 +53,6 @@ module.exports.me = async (req, res, next) => {
       email: foundUser.email,
     });
   } catch (err) {
-    if (err instanceof UserNotFoundError) {
-      return next(new UserNotFoundError('User not found'));
-    }
     next(err);
   }
 };

@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const CONSTANTS = require('../constants');
-const UncorrectPassword = require('../errors/UncorrectPassword');
 
 module.exports.generateAccessToken = (user) => jwt.sign({
   firstName: user.firstName,
@@ -16,9 +15,6 @@ module.exports.generateAccessToken = (user) => jwt.sign({
 }, CONSTANTS.JWT_SECRET, { expiresIn: CONSTANTS.ACCESS_TOKEN_TIME });
 
 module.exports.passwordCompare = async (pass1, pass2) => {
-  const passwordCompare = await bcrypt.compare(pass1, pass2);
-  if (!passwordCompare) {
-    throw new UncorrectPassword('Wrong password');
-  }
+  return await bcrypt.compare(pass1, pass2);
 };
 

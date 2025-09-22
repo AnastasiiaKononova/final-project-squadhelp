@@ -3,6 +3,7 @@ import ACTION from '../actions/actionTypes';
 import * as restController from '../api/rest/restController';
 import CONSTANTS from '../constants';
 
+
 export function* changeMarkSaga(action) {
   try {
     const { data } = yield restController.changeMark(action.data);
@@ -27,6 +28,7 @@ export function* addOfferSaga(action) {
     const offers = yield select((state) => state.contestByIdStore.offers);
     offers.unshift(data);
     yield put({ type: ACTION.ADD_NEW_OFFER_TO_STORE, data: offers });
+    if (action.resetForm) action.resetForm();
   } catch (e) {
     yield put({ type: ACTION.ADD_OFFER_ERROR, error: e.response });
   }
