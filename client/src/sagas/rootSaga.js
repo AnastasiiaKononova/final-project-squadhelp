@@ -20,13 +20,15 @@ import {
   sendMessage,
   changeChatFavorite,
   changeChatBlock,
+} from './chatSagas';
+import {
   getCatalogListSaga,
   addChatToCatalog,
   createCatalog,
   deleteCatalog,
   removeChatFromCatalogSaga,
   changeCatalogName,
-} from './chatSagas';
+} from './catalogSagas';
 
 function* rootSaga() {
   yield takeLatest(ACTION.AUTH_ACTION_REGISTER, registerSaga);
