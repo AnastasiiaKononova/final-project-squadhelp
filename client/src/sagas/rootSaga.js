@@ -1,6 +1,6 @@
 import { takeLatest, takeLeading, takeEvery } from 'redux-saga/effects';
 import ACTION from '../actions/actionTypes';
-import { registerSaga, loginSaga } from './authSagas';
+import { registerSaga, loginSaga } from './authSaga';
 import {
   privateSaga, updateUserData, notAuthorizeSaga, headerRequest,
 } from './userSaga';
@@ -12,15 +12,15 @@ import {
   dataForContestSaga,
   getContestByIdSaga,
   downloadContestFileSaga,
-} from './contestsSagas';
-import { changeMarkSaga, setOfferStatusSaga, addOfferSaga } from './offerSagas';
+} from './contestsSaga';
+import { changeMarkSaga, setOfferStatusSaga, addOfferSaga } from './offerSaga';
 import {
   previewSaga,
   getDialog,
   sendMessage,
   changeChatFavorite,
   changeChatBlock,
-} from './chatSagas';
+} from './chatSaga';
 import {
   getCatalogListSaga,
   addChatToCatalog,
@@ -28,7 +28,7 @@ import {
   deleteCatalog,
   removeChatFromCatalogSaga,
   changeCatalogName,
-} from './catalogSagas';
+} from './catalogSaga';
 
 function* rootSaga() {
   yield takeLatest(ACTION.AUTH_ACTION_REGISTER, registerSaga);
