@@ -1,6 +1,5 @@
-import ACTION from '../actions/actionTypes';
-import CONSTANTS from '../constants';
-import {normalizeError} from '../utils/normalizeError';
+import ACTION from '../../actions/actionTypes';
+import CONSTANTS from '../../constants';
 
 const initialState = {
   isFetching: true,
@@ -17,7 +16,7 @@ const initialState = {
   haveMore: true,
 };
 
-export default function (state = initialState, action) {
+function getContestsReducer (state = initialState, action) {
   switch (action.type) {
     case ACTION.GET_CONTESTS_ACTION_REQUEST: {
       return {
@@ -39,7 +38,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         isFetching: false,
-        error: normalizeError(action.error),
+        error: action.error,
         contests: [],
       };
     }
@@ -70,3 +69,5 @@ export default function (state = initialState, action) {
       return state;
   }
 }
+
+export default getContestsReducer;

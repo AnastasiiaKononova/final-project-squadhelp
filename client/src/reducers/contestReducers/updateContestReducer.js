@@ -1,38 +1,40 @@
-import ACTION from '../actions/actionTypes';
+import ACTION from '../../actions/actionTypes';
 
 const initialState = {
   isFetching: true,
-  data: null,
   error: null,
+  data: null,
 };
 
-export default function (state = initialState, action) {
+function updateContestReducer (state = initialState, action) {
   switch (action.type) {
-    case ACTION.GET_DATA_FOR_CONTEST_ACTION_REQUEST: {
+    case ACTION.UPDATE_CONTEST_REQUEST: {
       return {
         isFetching: true,
-        data: null,
         error: null,
+        data: null,
       };
     }
-    case ACTION.GET_DATA_FOR_CONTEST_ACTION_SUCCESS: {
+    case ACTION.UPDATE_CONTEST_SUCCESS: {
       return {
         isFetching: false,
+        error: null,
         data: action.data,
-        error: null,
       };
     }
-    case ACTION.GET_DATA_FOR_CONTEST_ACTION_ERROR: {
+    case ACTION.UPDATE_CONTEST_ERROR: {
       return {
         isFetching: false,
-        data: null,
         error: action.error,
+        data: null,
       };
     }
-    case ACTION.CLEAR_PREFERENCE: {
+    case ACTION.CLEAR_UPDATE_CONTEST_STORE: {
       return initialState;
     }
     default:
       return state;
   }
 }
+
+export default updateContestReducer;
