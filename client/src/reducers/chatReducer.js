@@ -7,14 +7,14 @@ const initialState = {
   messages: [],
   error: null,
   isExpanded: false,
-  interlocutor: [],
+  interlocutor: {},
   messagesPreview: [],
   isShow: false,
   isShowCatalogCreation: false,
   chatMode: CONSTANTS.NORMAL_PREVIEW_CHAT_MODE,
 };
   
-export default function (state = initialState, action) {
+function chatReducer (state = initialState, action) {
   switch (action.type) {
     case ACTION.GET_PREVIEW_CHAT: {
       return {
@@ -51,7 +51,7 @@ export default function (state = initialState, action) {
     case ACTION.GO_TO_EXPANDED_DIALOG: {
       return {
         ...state,
-        interlocutor: { ...state.interlocutor, ...action.data.interlocutor },
+        interlocutor: action.data.interlocutor || {},
         chatData: action.data.conversationData,
         isShow: true,
         isExpanded: true,
@@ -69,7 +69,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         messages: [],
-        interlocutor: null,
+        interlocutor: {},
         error: action.error,
       };
     }
@@ -130,3 +130,5 @@ export default function (state = initialState, action) {
       return state;
   }
 }
+
+export default chatReducer;

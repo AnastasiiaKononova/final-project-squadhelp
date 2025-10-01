@@ -6,7 +6,7 @@ const initialState = {
   focusOnElement: 'number',
 };
 
-export default function (state = initialState, action) {
+function payReducer (state = initialState, action) {
   switch (action.type) {
     case ACTION.CHANGE_FOCUS_ON_CARD: {
       return {
@@ -35,3 +35,5 @@ export default function (state = initialState, action) {
       return state;
   }
 }
+
+export default payReducer;

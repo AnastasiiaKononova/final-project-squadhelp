@@ -13,7 +13,7 @@ const initialState = {
   isFetching: true,
 };
 
-export default function (state = initialState, action) {
+function catalogReducer (state = initialState, action) {
   switch (action.type) {
     case ACTION.RECEIVE_CATALOG_LIST: {
       return {
@@ -22,7 +22,6 @@ export default function (state = initialState, action) {
         catalogList: [...action.data],
       };
     }
-
     case ACTION.RECEIVE_CATALOG_LIST_ERROR: {
       return {
         ...state,
@@ -30,7 +29,6 @@ export default function (state = initialState, action) {
         error: action.error,
       };
     }
-
     case ACTION.ADD_CHAT_TO_CATALOG: {
       return {
         ...state,
@@ -38,7 +36,6 @@ export default function (state = initialState, action) {
         catalogList: [...action.data],
       };
     }
-
     case ACTION.ADD_CHAT_TO_CATALOG_ERROR: {
       return {
         ...state,
@@ -46,15 +43,15 @@ export default function (state = initialState, action) {
         isShowCatalogCreation: false,
       };
     }
-
     case ACTION.CREATE_CATALOG_SUCCESS: {
+      const newCatalog = { ...action.data, chats: action.data.chats || [] };
       return {
         ...state,
         catalogList: [...state.catalogList, action.data],
+        currentCatalog: newCatalog,
         isShowCatalogCreation: false,
       };
     }
-
     case ACTION.CREATE_CATALOG_ERROR: {
       return {
         ...state,
@@ -62,21 +59,18 @@ export default function (state = initialState, action) {
         error: action.error,
       };
     }
-
     case ACTION.DELETE_CATALOG_SUCCESS: {
       return {
         ...state,
         catalogList: [...action.data],
       };
     }
-
     case ACTION.DELETE_CATALOG_ERROR: {
       return {
         ...state,
         error: action.error,
       };
     }
-
     case ACTION.REMOVE_CHAT_FROM_CATALOG_SUCCESS: {
       return {
         ...state,
@@ -84,14 +78,12 @@ export default function (state = initialState, action) {
         catalogList: [...action.data.catalogList],
       };
     }
-
     case ACTION.REMOVE_CHAT_FROM_CATALOG_ERROR: {
       return {
         ...state,
         error: action.error,
       };
     }
-
     case ACTION.CHANGE_CATALOG_NAME_SUCCESS: {
       return {
         ...state,
@@ -100,14 +92,12 @@ export default function (state = initialState, action) {
         isRenameCatalog: false,
       };
     }
-
     case ACTION.CHANGE_CATALOG_NAME_ERROR: {
       return {
         ...state,
         isRenameCatalog: false,
       };
     }
-
     case ACTION.CHANGE_SHOW_MODE_CATALOG: {
       return {
         ...state,
@@ -116,14 +106,12 @@ export default function (state = initialState, action) {
         isRenameCatalog: false,
       };
     }
-
     case ACTION.CHANGE_TYPE_ADDING_CHAT_IN_CATALOG: {
       return {
         ...state,
         catalogCreationMode: action.data,
       };
     }
-
     case ACTION.CHANGE_SHOW_ADD_CHAT_TO_CATALOG: {
       return {
         ...state,
@@ -131,22 +119,21 @@ export default function (state = initialState, action) {
         isShowCatalogCreation: !state.isShowCatalogCreation,
       };
     }
-
     case ACTION.CHANGE_RENAME_CATALOG_MODE: {
       return {
         ...state,
         isRenameCatalog: !state.isRenameCatalog,
       };
     }
-
     case ACTION.CLEAR_CHAT_ERROR: {
       return {
         ...state,
         error: null,
       };
     }
-
     default:
       return state;
   }
 }
+
+export default catalogReducer;

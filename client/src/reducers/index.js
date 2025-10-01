@@ -1,16 +1,18 @@
 import { combineReducers } from 'redux';
 import authReducer from './authReducer';
 import getUserReducer from './userReducer';
-import dataForContestReducer from './dataForContestReducer';
 import payReducer from './payReducer';
-import getContestsReducer from './getContestsReducer';
-import storeContestReducer from './storeContestReducer';
 import bundleReducer from './bundleReducer';
-import getContestByIdReducer from './getContestByIdReducer';
-import updateContestReducer from './updateContestReducer';
 import chatReducer from './chatReducer';
 import userProfileReducer from './userProfileReducer';
 import catalogReducer from './catalogReducer';
+import {
+  dataForContestReducer,
+  getContestByIdReducer,
+  getContestsReducer,
+  storeContestReducer,
+  updateContestReducer,
+} from './contestReducers';
 
 const appReducer = combineReducers({
   userStore: getUserReducer,
