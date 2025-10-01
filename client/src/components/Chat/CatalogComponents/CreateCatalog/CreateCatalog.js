@@ -40,6 +40,6 @@ const mapDispatchToProps = (dispatch) => ({
   createCatalog: (data) => dispatch(createCatalog(data)),
 });
 
-const mapStateToProps = (state) => state.chatStore;
+const mapStateToProps = (state) => state.catalogStore;
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateCatalog);

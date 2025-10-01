@@ -81,8 +81,9 @@ class Chat extends React.Component {
 
     render() {
       const {
-        isExpanded, isShow, isShowCatalogCreation, error,
+        isExpanded, isShow, error,
       } = this.props.chatStore;
+      const {isShowCatalogCreation} = this.props.catalogStore;
       const { id } = this.props.userStore.data;
       const { changeShow, getPreviewChat } = this.props;
       return (
@@ -102,8 +103,8 @@ class Chat extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  const { chatStore, userStore } = state;
-  return { chatStore, userStore };
+  const { chatStore, userStore, catalogStore } = state;
+  return { chatStore, userStore, catalogStore };
 };
 
 const mapDispatchToProps = (dispatch) => ({

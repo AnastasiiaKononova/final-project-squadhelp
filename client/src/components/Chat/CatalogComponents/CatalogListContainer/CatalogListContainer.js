@@ -10,13 +10,13 @@ class CatalogListContainer extends React.Component {
   }
 
     removeChatFromCatalog = (event, conversationId) => {
-      const { _id } = this.props.chatStore.currentCatalog;
+      const { _id } = this.props.catalogStore.currentCatalog;
       this.props.removeChatFromCatalog({ conversationId, catalogId: _id });
       event.stopPropagation();
     };
 
     getDialogsPreview = () => {
-      const { messagesPreview, currentCatalog } = this.props.chatStore;
+      const { messagesPreview, currentCatalog } = this.props.catalogStore;
       const { chats } = currentCatalog;
       const dialogsInCatalog = [];
       for (let i = 0; i < messagesPreview.length; i++) {
@@ -30,7 +30,7 @@ class CatalogListContainer extends React.Component {
     };
 
     render() {
-      const { catalogList, isShowChatsInCatalog } = this.props.chatStore;
+      const { catalogList, isShowChatsInCatalog } = this.props.catalogStore;
       const { id } = this.props.userStore.data;
       return (
         <>
@@ -48,8 +48,11 @@ class CatalogListContainer extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  const { chatStore, userStore } = state;
-  return { chatStore, userStore };
+  const { catalogStore, chatStore, userStore } = state;
+  return {
+    catalogStore: { ...catalogStore, messagesPreview: chatStore.messagesPreview }, 
+    userStore 
+  }
 };
 
 const mapDispatchToProps = (dispatch) => ({
