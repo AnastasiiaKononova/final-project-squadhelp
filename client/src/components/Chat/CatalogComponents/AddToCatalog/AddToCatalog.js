@@ -58,7 +58,7 @@ const AddToCatalog = (props) => {
   );
 };
 
-const mapStateToProps = (state) => state.chatStore;
+const mapStateToProps = (state) => state.catalogStore;
 
 const mapDispatchToProps = (dispatch) => ({
   addChatToCatalog: (data) => dispatch(addChatToCatalog(data)),

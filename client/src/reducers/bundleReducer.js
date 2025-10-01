@@ -4,7 +4,7 @@ const initialState = {
   bundle: null,
 };
 
-export default function (state = initialState, action) {
+function bundleReducer (state = initialState, action) {
   switch (action.type) {
     case ACTION.SELECT_BUNDLE_ACTION: {
       return {
@@ -20,3 +20,5 @@ export default function (state = initialState, action) {
       return state;
   }
 }
+
+export default bundleReducer;

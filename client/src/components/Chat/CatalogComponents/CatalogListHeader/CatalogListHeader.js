@@ -53,8 +53,8 @@ const CatalogListHeader = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  const { isRenameCatalog } = state.chatStore;
-  const { catalogName, _id } = state.chatStore.currentCatalog;
+  const { isRenameCatalog } = state.catalogStore;
+  const { catalogName, _id } = state.catalogStore.currentCatalog;
   return {
     _id,
     catalogName,

@@ -1,6 +1,4 @@
-import ACTION from '../actions/actionTypes';
-import CONTANTS from '../constants';
-import { normalizeError } from '../utils/normalizeError';
+import ACTION from '../../actions/actionTypes';
 
 const initialState = {
   isFetching: true,
@@ -17,7 +15,7 @@ const initialState = {
   isShowModal: false,
 };
 
-export default function (state = initialState, action) {
+function getContestByIdReducer (state = initialState, action) {
   switch (action.type) {
     case ACTION.GET_CONTEST_BY_ID_REQUEST: {
       return {
@@ -54,7 +52,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         isFetching: false,
-        error: normalizeError(action.error),
+        error: action.error,
       };
     }
     case ACTION.UPDATE_STORE_AFTER_UPDATE_CONTEST: {
@@ -139,3 +137,5 @@ export default function (state = initialState, action) {
       return state;
   }
 }
+
+export default getContestByIdReducer;

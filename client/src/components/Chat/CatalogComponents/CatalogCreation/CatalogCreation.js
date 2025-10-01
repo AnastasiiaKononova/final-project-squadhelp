@@ -50,7 +50,7 @@ class CatalogCreation extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => state.chatStore;
+const mapStateToProps = (state) => state.catalogStore;
 
 const mapDispatchToProps = (dispatch) => ({
   changeTypeOfChatAdding: (data) => dispatch(changeTypeOfChatAdding(data)),

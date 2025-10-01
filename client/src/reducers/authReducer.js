@@ -5,24 +5,27 @@ const initialState = {
   error: null,
 };
 
-export default function (state = initialState, action) {
+function authReducer (state = initialState, action) {
   switch (action.type) {
     case ACTION.AUTH_ACTION_REQUEST: {
       return {
+        ...state,
         isFetching: true,
         error: null,
       };
     }
     case ACTION.AUTH_ACTION_SUCCESS: {
       return {
+        ...state,
         isFetching: false,
         error: null,
       };
     }
     case ACTION.AUTH_ACTION_ERROR: {
       return {
+        ...state,
         isFetching: false,
-        error: action.error || null,
+        error: action.error,
       };
     }
     case ACTION.AUTH_ACTION_CLEAR_ERROR: {
@@ -38,3 +41,6 @@ export default function (state = initialState, action) {
       return state;
   }
 }
+
+
+export default authReducer;
